@@ -151,6 +151,22 @@
         .dialog-box button {
             flex: 1;
         }
+        .category-options {
+            margin-bottom: 15px;
+        }
+        .category-options .form-group {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .category-options input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        .category-options label {
+            display: inline;
+            font-weight: normal;
+        }
         .dialog-box h3 {
             margin-top: 0;
             color: #2c3e50;
@@ -196,7 +212,7 @@
         </div>
         <div class="form-group">
             <label for="purpose">Business Purpose:</label>
-            <input type="text" id="purpose" placeholder="Client meeting, Delivery, etc.">
+            <input type="text" id="purpose" placeholder="Client meeting, Delivery, etc." onchange="showCategoryDialog()">
         </div>
         <div class="form-group">
             <label for="startOdometer">Starting Odometer:</label>
@@ -243,6 +259,45 @@
         </div>
     </div>
 
+    <!-- Dialog for business purpose category -->
+    <div id="categoryDialog" style="display:none;">
+        <div class="dialog-overlay"></div>
+        <div class="dialog-box">
+            <h3>Select Business Purpose Category</h3>
+            <p>Choose a category for this trip:</p>
+            <div class="category-options">
+                <div class="form-group">
+                    <input type="radio" id="clientMeeting" name="category" value="Client Meetings">
+                    <label for="clientMeeting">Client Meetings</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="clientLunch" name="category" value="Client Lunch">
+                    <label for="clientLunch">Client Lunch</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="filming" name="category" value="Filming">
+                    <label for="filming">Filming</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="equipment" name="category" value="Equipment Pick Up/Drop Off">
+                    <label for="equipment">Equipment Pick Up/Drop Off</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="clientMisc" name="category" value="Client MISC">
+                    <label for="clientMisc">Client MISC</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="other" name="category" value="Other">
+                    <label for="other">Other</label>
+                </div>
+            </div>
+            <div class="buttons">
+                <button onclick="applyCategory()">Apply</button>
+                <button onclick="closeCategoryDialog()" style="background-color: #7f8c8d;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
 <script>
 // Load saved data from localStorage if available
 document.addEventListener('DOMContentLoaded', function() {
@@ -285,6 +340,31 @@ function showOdometerDialog() {
 function closeOdometerDialog() {
     document.getElementById('odometerDialog').style.display = 'none';
     document.getElementById('tripDistance').value = '';
+}
+
+function showCategoryDialog() {
+    const purpose = document.getElementById('purpose').value.trim();
+    if (purpose) {
+        document.getElementById('categoryDialog').style.display = 'block';
+        // Clear any previously selected categories
+        const radioButtons = document.querySelectorAll('input[name="category"]');
+        radioButtons.forEach(button => button.checked = false);
+    }
+}
+
+function closeCategoryDialog() {
+    document.getElementById('categoryDialog').style.display = 'none';
+}
+
+function applyCategory() {
+    const selectedCategory = document.querySelector('input[name="category"]:checked');
+    if (selectedCategory) {
+        const currentPurpose = document.getElementById('purpose').value.trim();
+        document.getElementById('purpose').value = `${selectedCategory.value}: ${currentPurpose}`;
+        closeCategoryDialog();
+    } else {
+        alert('Please select a category');
+    }
 }
 
 function calculateEndOdometer() {
