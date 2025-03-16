@@ -195,7 +195,12 @@
         <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
     </div>
     
-    <button id="toggleFormBtn" class="toggle-form-btn" onclick="toggleTripForm()">Add New Trip</button>
+    <button id="toggleFormBtn" class="toggle-form-btn" onclick="toggleFormOptions()">Add New Trip</button>
+    
+    <div id="formOptions" style="display:none; margin-bottom: 15px; text-align: center;">
+        <button onclick="openNewForm(true)" style="background-color: #2ecc71; margin-right: 10px;">Continue Last Trip</button>
+        <button onclick="openNewForm(false)" style="background-color: #3498db;">Start Blank Form</button>
+    </div>
     
     <div id="tripForm" class="input-form" style="display:none;">
         <div class="form-group">
@@ -290,17 +295,67 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+function toggleFormOptions() {
+    const formOptions = document.getElementById('formOptions');
+    const btn = document.getElementById('toggleFormBtn');
+    const form = document.getElementById('tripForm');
+    
+    if (formOptions.style.display === 'none') {
+        formOptions.style.display = 'block';
+        btn.textContent = 'Cancel';
+        form.style.display = 'none'; // Make sure form is hidden
+    } else {
+        formOptions.style.display = 'none';
+        btn.textContent = 'Add New Trip';
+        form.style.display = 'none'; // Make sure form is hidden
+    }
+}
+
+function openNewForm(continueLast) {
+    // Hide options and show form
+    document.getElementById('formOptions').style.display = 'none';
+    document.getElementById('tripForm').style.display = 'block';
+    document.getElementById('toggleFormBtn').textContent = 'Hide Form';
+    
+    // Clear the form first
+    clearForm();
+    
+    // If continuing from last trip, load the data
+    if (continueLast) {
+        loadLastTripData();
+    } else {
+        // For blank form, just set today's date
+        document.getElementById('date').valueAsDate = new Date();
+    }
+}
+
+function clearForm() {
+    // Clear all form inputs
+    document.getElementById('date').value = '';
+    document.getElementById('startLocation').value = '';
+    document.getElementById('destination').value = '';
+    document.getElementById('purposeCategory').value = '';
+    document.getElementById('purposeDetail').value = '';
+    document.getElementById('otherCategoryInput').value = '';
+    document.getElementById('purposeDetailContainer').style.display = 'none';
+    document.getElementById('otherCategoryContainer').style.display = 'none';
+    document.getElementById('startOdometer').value = '';
+    document.getElementById('endOdometer').value = '';
+    document.getElementById('tripDistance').value = '';
+    document.getElementById('milesDriven').textContent = '0';
+}
+
 function toggleTripForm() {
     const form = document.getElementById('tripForm');
     const btn = document.getElementById('toggleFormBtn');
+    const formOptions = document.getElementById('formOptions');
+    
     if (form.style.display === 'none') {
-        form.style.display = 'block';
-        btn.textContent = 'Hide Form';
-        
-        // Load last trip data when opening the form
-        loadLastTripData();
+        // Instead of showing the form directly, show the options
+        toggleFormOptions();
     } else {
         form.style.display = 'none';
+        formOptions.style.display = 'none';
         btn.textContent = 'Add New Trip';
     }
 }
@@ -313,10 +368,9 @@ function loadLastTripData() {
             // Get the most recent trip
             const lastTrip = trips[trips.length - 1];
             
-            // For potential return trips: use last destination as new starting point
-            // and last starting point as new destination
+            // Use last destination as new starting point, but leave destination blank
             document.getElementById('startLocation').value = lastTrip.destination;
-            document.getElementById('destination').value = lastTrip.startLocation;
+            document.getElementById('destination').value = ''; // Leave destination blank
             
             // Handle purpose category and details
             let category = '';
@@ -488,21 +542,12 @@ function addTrip() {
     // Save updated data
     localStorage.setItem('mileageData', JSON.stringify(trips));
     
-    // Clear input fields
-    document.getElementById('date').value = '';
-    document.getElementById('startLocation').value = '';
-    document.getElementById('destination').value = '';
-    document.getElementById('purposeCategory').value = '';
-    document.getElementById('purposeDetail').value = '';
-    document.getElementById('otherCategoryInput').value = '';
-    document.getElementById('purposeDetailContainer').style.display = 'none';
-    document.getElementById('otherCategoryContainer').style.display = 'none';
-    document.getElementById('startOdometer').value = '';
-    document.getElementById('endOdometer').value = '';
-    document.getElementById('milesDriven').textContent = '0';
+    // Clear and hide form
+    clearForm();
+    document.getElementById('tripForm').style.display = 'none';
+    document.getElementById('toggleFormBtn').textContent = 'Add New Trip';
     
-    // Hide form and update display
-    toggleTripForm();
+    // Update display
     renderTripsList();
     updateSummary();
 }
