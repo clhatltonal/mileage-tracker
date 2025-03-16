@@ -731,3 +731,9 @@
                 if (lastTrip.workStatus) {
                     document.getElementById('workStatus').value = lastTrip.workStatus;
                 }
+// Add this at the end of your script
+document.getElementById('addTripBtn').addEventListener('click', function() {
+  const tripOptions = document.getElementById('tripOptions');
+  tripOptions.style.display = tripOptions.style.display === 'none' || 
+                              tripOptions.style.display === '' ? 'block' : 'none';
+});
