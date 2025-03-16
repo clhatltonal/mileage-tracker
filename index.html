@@ -1,65 +1,10 @@
-<td>${trip.miles}</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="edit-btn" onclick="editTrip(${trip.id})">Edit</button>
-                        <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
-                    </div>
-                </td>
-            `;
-            
-            tbody.appendChild(tr);
+.location-input-container {
+            position: relative;
+            width: 100%;
         }
-        
-        table.appendChild(tbody);
-        tripsList.appendChild(table);
-    } else {
-        tripsList.innerHTML = '<p class="empty-list-message">No trips added yet. Use the form above to add your first trip.</p>';
-    }
-}
-
-function updateSummary() {
-    let totalMiles = 0;
-    
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
-    }
-    
-    document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
-    
-    // Calculate tax deduction (using 2024 rate of 67 cents per mile)
-    const taxDeduction = totalMiles * 0.67;
-    document.getElementById('taxDeduction').textContent = taxDeduction.toFixed(2);
-}
-
-function exportToCSV() {
-    const savedData = localStorage.getItem('mileageData');
-    if (!savedData || JSON.parse(savedData).length === 0) {
-        alert('No data to export');
-        return;
-    }
-    
-    const trips = JSON.parse(savedData);
-    let csv = 'Date,Starting Location,Destination,Business Purpose,Work Status,Starting Odometer,Ending Odometer,Miles Driven\n';
-    
-    for (const trip of trips) {
-        const rowData = [
-            trip.date,
-            '"' + trip.startLocation + '"',
-            '"' + trip.destination + '"',
-            '"' + trip.purpose + '"',
-            '"' + (trip.workStatus || 'Not specified') + '"',
-            trip.startOdo,
-            trip.endOdo,
-            trip.miles
-        ];
-        csv += rowData.join(',') + '\n';
-    }
-    
-    const totalMiles = document.getElementById('totalMiles').textContent;
-    const taxDeduction = document.getElementById('taxDeduction').textContent;
-    csv += '\nTotal Miles,' + totalMiles + '\nEstimated Tax Deduction,<!DOCTYPE html>
+        .location-input-container input {
+            width: 100%;
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -182,13 +127,6 @@ function exportToCSV() {
         .add-trip-btn:hover {
             background-color: #27ae60;
         }
-        .cancel-btn {
-            background-color: #7f8c8d;
-            margin-top: 10px;
-        }
-        .cancel-btn:hover {
-            background-color: #6c7a7a;
-        }
         .rate-info {
             margin-top: 20px;
             padding: 10px;
@@ -203,57 +141,54 @@ function exportToCSV() {
         .toggle-form-btn:hover {
             background-color: #8e44ad;
         }
-        .location-input-container {
-            position: relative;
-            width: 100%;
+        .dialog-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
         }
-        .location-input-container input {
-            width: 100%;
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
         }
-        .trips-list-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            background-color: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .dialog-box .buttons {
+            flex-direction: row;
+            margin-top: 20px;
         }
-        .trips-list-table th {
-            background-color: #3498db;
-            color: white;
-            padding: 10px;
-            text-align: left;
-            font-weight: bold;
-            font-size: 0.9rem;
+        .dialog-box button {
+            flex: 1;
         }
-        .trips-list-table td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9rem;
+        .category-options {
+            margin-bottom: 15px;
         }
-        .trips-list-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .trips-list-table tr:hover {
-            background-color: #f0f7fb;
-        }
-        .action-buttons {
+        .category-options .form-group {
+            margin-bottom: 8px;
             display: flex;
-            gap: 5px;
+            align-items: center;
         }
-        .trips-list-table th:last-child,
-        .trips-list-table td:last-child {
-            text-align: center;
+        .category-options input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
         }
-        .table-purpose {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .category-options label {
+            display: inline;
+            font-weight: normal;
         }
-        .empty-list-message {
-            text-align: center;
-            color: #777;
-            margin: 20px 0;
+        .dialog-box h3 {
+            margin-top: 0;
+            color: #2c3e50;
         }
         @media (min-width: 768px) {
             body {
@@ -312,7 +247,7 @@ function exportToCSV() {
             </div>
         </div>
         <div class="form-group">
-            <label for="purposeCategory">Business Purpose Category:</label>
+            <label for="purpose">Business Purpose Category:</label>
             <select id="purposeCategory" onchange="handleCategoryChange()">
                 <option value="">-- Select a Category --</option>
                 <option value="Client Meetings">Client Meetings</option>
@@ -329,10 +264,6 @@ function exportToCSV() {
             <label for="purposeDetail">Business Purpose Details (optional):</label>
             <input type="text" id="purposeDetail" placeholder="Enter specific details (optional)">
         </div>
-        <div class="form-group" id="otherCategoryContainer" style="display:none;">
-            <label for="otherCategoryInput">Specify Other Category:</label>
-            <input type="text" id="otherCategoryInput" placeholder="Enter custom category">
-        </div>
         <div class="form-group">
             <label for="workStatus">Work Status:</label>
             <select id="workStatus">
@@ -341,6 +272,10 @@ function exportToCSV() {
                 <option value="Work">Work</option>
                 <option value="Start Work Finish">Start Work Finish</option>
             </select>
+        </div>
+        <div class="form-group" id="otherCategoryContainer" style="display:none;">
+            <label for="otherCategoryInput">Specify Other Category:</label>
+            <input type="text" id="otherCategoryInput" placeholder="Enter custom category">
         </div>
         <div class="form-group">
             <label for="startOdometer">Starting Odometer:</label>
@@ -360,7 +295,7 @@ function exportToCSV() {
         </div>
         <div class="buttons">
             <button class="add-trip-btn" id="saveButton" onclick="saveTrip()">Save Trip</button>
-            <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+            <button class="cancel-btn" onclick="cancelEdit()" style="background-color: #7f8c8d;">Cancel</button>
         </div>
     </div>
     
@@ -377,6 +312,10 @@ function exportToCSV() {
         <button onclick="clearAll()">Clear All</button>
     </div>
 
+
+
+
+
 <script>
 // Load saved data from localStorage if available
 document.addEventListener('DOMContentLoaded', function() {
@@ -387,6 +326,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for automatic miles calculation
     document.getElementById('startOdometer').addEventListener('input', calculateMiles);
     document.getElementById('endOdometer').addEventListener('input', calculateMiles);
+    
+    // Close dialogs if user clicks outside
+    document.addEventListener('click', function(event) {
+        const odometerDialog = document.getElementById('odometerDialog');
+        const categoryDialog = document.getElementById('categoryDialog');
+        
+        if (event.target.classList.contains('dialog-overlay')) {
+            odometerDialog.style.display = 'none';
+            categoryDialog.style.display = 'none';
+        }
+    });
 });
 
 function toggleFormOptions() {
@@ -423,63 +373,35 @@ function openNewForm(continueLast) {
     }
 }
 
-function calculateMiles() {
-    const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
-    const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
-    const miles = Math.max(0, endOdo - startOdo);
-    document.getElementById('milesDriven').textContent = miles.toFixed(1);
+function clearForm() {
+    // Clear all form inputs
+    document.getElementById('date').value = '';
+    document.getElementById('startLocation').value = '';
+    document.getElementById('destination').value = '';
+    document.getElementById('purposeCategory').value = '';
+    document.getElementById('purposeDetail').value = '';
+    document.getElementById('otherCategoryInput').value = '';
+    document.getElementById('workStatus').value = '';
+    document.getElementById('purposeDetailContainer').style.display = 'none';
+    document.getElementById('otherCategoryContainer').style.display = 'none';
+    document.getElementById('startOdometer').value = '';
+    document.getElementById('endOdometer').value = '';
+    document.getElementById('tripDistance').value = '';
+    document.getElementById('milesDriven').textContent = '0';
 }
 
-function calculateEndOdometer() {
-    const startOdo = parseFloat(document.getElementById('startOdometer').value);
-    const tripDistance = parseFloat(document.getElementById('tripDistance').value);
+function toggleTripForm() {
+    const form = document.getElementById('tripForm');
+    const btn = document.getElementById('toggleFormBtn');
+    const formOptions = document.getElementById('formOptions');
     
-    if (!isNaN(startOdo) && !isNaN(tripDistance) && tripDistance > 0) {
-        const endOdo = startOdo + tripDistance;
-        document.getElementById('endOdometer').value = endOdo.toFixed(1);
-        calculateMiles();
-    }
-}
-
-function handleCategoryChange() {
-    const categorySelect = document.getElementById('purposeCategory');
-    const otherContainer = document.getElementById('otherCategoryContainer');
-    const detailsContainer = document.getElementById('purposeDetailContainer');
-    
-    // Always show the details container if a category is selected
-    if (categorySelect.value) {
-        detailsContainer.style.display = 'block';
-        
-        // Only show the "Other" input if "Other" is selected
-        if (categorySelect.value === 'Other') {
-            otherContainer.style.display = 'block';
-            document.getElementById('otherCategoryInput').focus();
-        } else {
-            otherContainer.style.display = 'none';
-            document.getElementById('purposeDetail').focus();
-        }
+    if (form.style.display === 'none') {
+        // Instead of showing the form directly, show the options
+        toggleFormOptions();
     } else {
-        // Hide both if no category is selected
-        detailsContainer.style.display = 'none';
-        otherContainer.style.display = 'none';
-    }
-}
-
-// Get the complete purpose string combining category and details
-function getFullBusinessPurpose() {
-    const category = document.getElementById('purposeCategory').value;
-    const details = document.getElementById('purposeDetail').value.trim();
-    const otherInput = document.getElementById('otherCategoryInput').value.trim();
-    
-    if (!category) return '';
-    
-    // Use the custom category if "Other" is selected and has input
-    const finalCategory = (category === 'Other' && otherInput) ? otherInput : category;
-    
-    if (details) {
-        return `${finalCategory}: ${details}`;
-    } else {
-        return finalCategory;
+        form.style.display = 'none';
+        formOptions.style.display = 'none';
+        btn.textContent = 'Add New Trip';
     }
 }
 
@@ -549,32 +471,79 @@ function loadLastTripData() {
     }
 }
 
-function clearForm() {
-    // Clear all form inputs
-    document.getElementById('date').value = '';
-    document.getElementById('startLocation').value = '';
-    document.getElementById('destination').value = '';
-    document.getElementById('purposeCategory').value = '';
-    document.getElementById('purposeDetail').value = '';
-    document.getElementById('otherCategoryInput').value = '';
-    document.getElementById('workStatus').value = '';
-    document.getElementById('purposeDetailContainer').style.display = 'none';
-    document.getElementById('otherCategoryContainer').style.display = 'none';
-    document.getElementById('startOdometer').value = '';
-    document.getElementById('endOdometer').value = '';
-    document.getElementById('tripDistance').value = '';
-    document.getElementById('milesDriven').textContent = '0';
+function calculateMiles() {
+    const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
+    const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
+    const miles = Math.max(0, endOdo - startOdo);
+    document.getElementById('milesDriven').textContent = miles.toFixed(1);
 }
 
-function saveTrip() {
-    const editId = document.getElementById('editTripId').value;
+function showOdometerDialog() {
+    const startOdo = parseFloat(document.getElementById('startOdometer').value);
+    if (!isNaN(startOdo)) {
+        document.getElementById('odometerDialog').style.display = 'block';
+        document.getElementById('tripDistance').focus();
+    }
+}
+
+function closeOdometerDialog() {
+    document.getElementById('odometerDialog').style.display = 'none';
+    document.getElementById('tripDistance').value = '';
+}
+
+function handleCategoryChange() {
+    const categorySelect = document.getElementById('purposeCategory');
+    const otherContainer = document.getElementById('otherCategoryContainer');
+    const detailsContainer = document.getElementById('purposeDetailContainer');
     
-    if (editId) {
-        // We're editing an existing trip
-        updateTrip(editId);
+    // Always show the details container if a category is selected
+    if (categorySelect.value) {
+        detailsContainer.style.display = 'block';
+        
+        // Only show the "Other" input if "Other" is selected
+        if (categorySelect.value === 'Other') {
+            otherContainer.style.display = 'block';
+            document.getElementById('otherCategoryInput').focus();
+        } else {
+            otherContainer.style.display = 'none';
+            document.getElementById('purposeDetail').focus();
+        }
     } else {
-        // We're adding a new trip
-        addTrip();
+        // Hide both if no category is selected
+        detailsContainer.style.display = 'none';
+        otherContainer.style.display = 'none';
+    }
+}
+
+// Get the complete purpose string combining category and details
+function getFullBusinessPurpose() {
+    const category = document.getElementById('purposeCategory').value;
+    const details = document.getElementById('purposeDetail').value.trim();
+    const otherInput = document.getElementById('otherCategoryInput').value.trim();
+    
+    if (!category) return '';
+    
+    // Use the custom category if "Other" is selected and has input
+    const finalCategory = (category === 'Other' && otherInput) ? otherInput : category;
+    
+    if (details) {
+        return `${finalCategory}: ${details}`;
+    } else {
+        return finalCategory;
+    }
+}
+
+function calculateEndOdometer() {
+    const startOdo = parseFloat(document.getElementById('startOdometer').value);
+    const tripDistance = parseFloat(document.getElementById('tripDistance').value);
+    
+    if (!isNaN(startOdo) && !isNaN(tripDistance) && tripDistance > 0) {
+        const endOdo = startOdo + tripDistance;
+        document.getElementById('endOdometer').value = endOdo.toFixed(1);
+        calculateMiles();
+        closeOdometerDialog();
+    } else {
+        alert('Please enter a valid trip distance.');
     }
 }
 
@@ -663,6 +632,18 @@ function editTrip(tripId) {
                 }
             }
         }
+    }
+}
+
+function saveTrip() {
+    const editId = document.getElementById('editTripId').value;
+    
+    if (editId) {
+        // We're editing an existing trip
+        updateTrip(editId);
+    } else {
+        // We're adding a new trip
+        addTrip();
     }
 }
 
@@ -826,7 +807,7 @@ function renderTripsList() {
         const trips = JSON.parse(savedData);
         
         if (trips.length === 0) {
-            tripsList.innerHTML = '<p class="empty-list-message">No trips added yet. Use the form above to add your first trip.</p>';
+            tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
             return;
         }
         
@@ -839,29 +820,10 @@ function renderTripsList() {
             return 0;
         });
         
-        // Create table for trips
-        const table = document.createElement('table');
-        table.className = 'trips-list-table';
-        
-        // Add table header
-        const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <tr>
-                <th>Date</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Purpose</th>
-                <th>Status</th>
-                <th>Miles</th>
-                <th>Actions</th>
-            </tr>
-        `;
-        table.appendChild(thead);
-        
-        // Add table body
-        const tbody = document.createElement('tbody');
-        
         for (const trip of trips) {
+            const tripCard = document.createElement('div');
+            tripCard.className = 'card-view';
+            
             // Format date for display - use a safe approach that won't shift dates
             let formattedDate = trip.date;
             
@@ -872,13 +834,68 @@ function renderTripsList() {
                 formattedDate = `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
             }
             
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${formattedDate}</td>
-                <td>${trip.startLocation}</td>
-                <td>${trip.destination}</td>
-                <td class="table-purpose">${trip.purpose}</td>
-                <td>${trip.workStatus || 'Not specified'}</td> + taxDeduction;
+            tripCard.innerHTML = `
+                <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
+                <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
+                <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
+                <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
+                <div><span class="label">Status:</span> <span class="value">${trip.workStatus || 'Not specified'}</span></div>
+                <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
+                <div class="card-buttons">
+                    <button class="edit-btn" onclick="editTrip(${trip.id})">Edit</button>
+                    <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
+                </div>
+            `;
+            
+            tripsList.appendChild(tripCard);
+        }
+    } else {
+        tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
+    }
+}
+
+function updateSummary() {
+    let totalMiles = 0;
+    
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        const trips = JSON.parse(savedData);
+        totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
+    }
+    
+    document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
+    
+    // Calculate tax deduction (using 2024 rate of 67 cents per mile)
+    const taxDeduction = totalMiles * 0.67;
+    document.getElementById('taxDeduction').textContent = taxDeduction.toFixed(2);
+}
+
+function exportToCSV() {
+    const savedData = localStorage.getItem('mileageData');
+    if (!savedData || JSON.parse(savedData).length === 0) {
+        alert('No data to export');
+        return;
+    }
+    
+    const trips = JSON.parse(savedData);
+    let csv = 'Date,Starting Location,Destination,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
+    
+    for (const trip of trips) {
+        const rowData = [
+            trip.date,
+            '"' + trip.startLocation + '"',
+            '"' + trip.destination + '"',
+            '"' + trip.purpose + '"',
+            trip.startOdo,
+            trip.endOdo,
+            trip.miles
+        ];
+        csv += rowData.join(',') + '\n';
+    }
+    
+    const totalMiles = document.getElementById('totalMiles').textContent;
+    const taxDeduction = document.getElementById('taxDeduction').textContent;
+    csv += '\nTotal Miles,' + totalMiles + '\nEstimated Tax Deduction,$' + taxDeduction;
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
@@ -921,823 +938,4 @@ function loadSavedData() {
 }
 </script>
 </body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work Mileage Tracker</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 10px;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            font-size: 1.5rem;
-        }
-        .card-view {
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
-        .card-view div {
-            margin-bottom: 5px;
-        }
-        .card-view .label {
-            font-weight: bold;
-            color: #555;
-            font-size: 0.9rem;
-        }
-        .card-view .value {
-            margin-left: 5px;
-        }
-        .input-form {
-            background-color: #f2f2f2;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 10px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 3px;
-            font-size: 0.9rem;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .summary {
-            margin-top: 20px;
-            background-color: #e8f7ef;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .buttons {
-            margin-top: 15px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        button {
-            padding: 12px 16px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button.delete-btn {
-            background-color: #e74c3c;
-            padding: 8px;
-            font-size: 0.9rem;
-        }
-        button.delete-btn:hover {
-            background-color: #c0392b;
-        }
-        button.edit-btn {
-            background-color: #f39c12;
-            padding: 8px;
-            font-size: 0.9rem;
-            margin-right: 5px;
-        }
-        button.edit-btn:hover {
-            background-color: #d35400;
-        }
-        .card-buttons {
-            display: flex;
-            margin-top: 8px;
-        }
-        .add-trip-btn {
-            background-color: #2ecc71;
-            margin-top: 10px;
-        }
-        .add-trip-btn:hover {
-            background-color: #27ae60;
-        }
-        .cancel-btn {
-            background-color: #7f8c8d;
-            margin-top: 10px;
-        }
-        .cancel-btn:hover {
-            background-color: #6c7a7a;
-        }
-        .rate-info {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-left: 4px solid #3498db;
-            font-size: 0.9rem;
-        }
-        .toggle-form-btn {
-            background-color: #9b59b6;
-            margin-bottom: 10px;
-        }
-        .toggle-form-btn:hover {
-            background-color: #8e44ad;
-        }
-        .location-input-container {
-            position: relative;
-            width: 100%;
-        }
-        .location-input-container input {
-            width: 100%;
-        }
-        .trips-list-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            background-color: #fff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .trips-list-table th {
-            background-color: #3498db;
-            color: white;
-            padding: 10px;
-            text-align: left;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .trips-list-table td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9rem;
-        }
-        .trips-list-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .trips-list-table tr:hover {
-            background-color: #f0f7fb;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        .trips-list-table th:last-child,
-        .trips-list-table td:last-child {
-            text-align: center;
-        }
-        .table-purpose {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .empty-list-message {
-            text-align: center;
-            color: #777;
-            margin: 20px 0;
-        }
-        @media (min-width: 768px) {
-            body {
-                margin: 20px;
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            .buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
-            button {
-                width: auto;
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>Work Mileage Tracker</h1>
-    
-    <div class="rate-info">
-        <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
-    </div>
-    
-    <button id="toggleFormBtn" class="toggle-form-btn" onclick="toggleFormOptions()">Add New Trip</button>
-    
-    <div id="formOptions" style="display:none; margin-bottom: 15px; text-align: center;">
-        <button onclick="openNewForm(true)" style="background-color: #2ecc71; margin-right: 10px;">Continue Last Trip</button>
-        <button onclick="openNewForm(false)" style="background-color: #3498db;">Start Blank Form</button>
-    </div>
-    
-    <div id="tripForm" class="input-form" style="display:none;">
-        <h3 id="formTitle">Add New Trip</h3>
-        <input type="hidden" id="editTripId" value="">
-        <div class="form-group">
-            <label for="date">Date:</label>
-            <input type="date" id="date">
-        </div>
-        <div class="form-group">
-            <label for="startLocation">Starting Location:</label>
-            <div class="location-input-container">
-                <input type="text" id="startLocation" placeholder="Home, Office, etc." list="startLocations">
-                <datalist id="startLocations">
-                    <option value="West Cave Loop Dripping Springs">
-                </datalist>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="destination">Destination:</label>
-            <div class="location-input-container">
-                <input type="text" id="destination" placeholder="Client site, Meeting, etc." list="destinations">
-                <datalist id="destinations">
-                    <option value="West Cave Loop Dripping Springs">
-                </datalist>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="purposeCategory">Business Purpose Category:</label>
-            <select id="purposeCategory" onchange="handleCategoryChange()">
-                <option value="">-- Select a Category --</option>
-                <option value="Client Meetings">Client Meetings</option>
-                <option value="Client Lunch">Client Lunch</option>
-                <option value="Filming">Filming</option>
-                <option value="Equipment Pick Up/Drop Off">Equipment Pick Up/Drop Off</option>
-                <option value="On Site with Client">On Site with Client</option>
-                <option value="Client MISC">Client MISC</option>
-                <option value="Returning Home">Returning Home</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-        <div class="form-group" id="purposeDetailContainer" style="display:none;">
-            <label for="purposeDetail">Business Purpose Details (optional):</label>
-            <input type="text" id="purposeDetail" placeholder="Enter specific details (optional)">
-        </div>
-        <div class="form-group" id="otherCategoryContainer" style="display:none;">
-            <label for="otherCategoryInput">Specify Other Category:</label>
-            <input type="text" id="otherCategoryInput" placeholder="Enter custom category">
-        </div>
-        <div class="form-group">
-            <label for="workStatus">Work Status:</label>
-            <select id="workStatus">
-                <option value="">-- Select Status --</option>
-                <option value="Start Work">Start Work</option>
-                <option value="Work">Work</option>
-                <option value="Start Work Finish">Start Work Finish</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="startOdometer">Starting Odometer:</label>
-            <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric" onchange="calculateMiles()">
-        </div>
-        <div class="form-group" id="tripDistanceContainer">
-            <label for="tripDistance">Trip Distance (miles):</label>
-            <input type="number" id="tripDistance" placeholder="Enter expected miles" inputmode="numeric" onchange="calculateEndOdometer()">
-        </div>
-        <div class="form-group">
-            <label for="endOdometer">Ending Odometer:</label>
-            <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric" onchange="calculateMiles()">
-        </div>
-        <div class="form-group">
-            <label>Miles Driven:</label>
-            <span id="milesDriven">0</span>
-        </div>
-        <div class="buttons">
-            <button class="add-trip-btn" id="saveButton" onclick="saveTrip()">Save Trip</button>
-            <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
-        </div>
-    </div>
-    
-    <div id="tripsList"></div>
-    
-    <div class="summary">
-        <h3>Summary</h3>
-        <p>Total Business Miles: <span id="totalMiles">0</span></p>
-        <p>Estimated Tax Deduction: $<span id="taxDeduction">0.00</span> (based on current year rate)</p>
-    </div>
-    
-    <div class="buttons">
-        <button onclick="exportToCSV()">Export to CSV</button>
-        <button onclick="clearAll()">Clear All</button>
-    </div>
-
-<script>
-// Load saved data from localStorage if available
-document.addEventListener('DOMContentLoaded', function() {
-    loadSavedData();
-    renderTripsList();
-    updateSummary();
-    
-    // Add event listeners for automatic miles calculation
-    document.getElementById('startOdometer').addEventListener('input', calculateMiles);
-    document.getElementById('endOdometer').addEventListener('input', calculateMiles);
-});
-
-function toggleFormOptions() {
-    const formOptions = document.getElementById('formOptions');
-    const btn = document.getElementById('toggleFormBtn');
-    const form = document.getElementById('tripForm');
-    
-    if (formOptions.style.display === 'none') {
-        formOptions.style.display = 'block';
-        btn.textContent = 'Cancel';
-        form.style.display = 'none'; // Make sure form is hidden
-    } else {
-        formOptions.style.display = 'none';
-        btn.textContent = 'Add New Trip';
-        form.style.display = 'none'; // Make sure form is hidden
-    }
-}
-
-function openNewForm(continueLast) {
-    // Hide options and show form
-    document.getElementById('formOptions').style.display = 'none';
-    document.getElementById('tripForm').style.display = 'block';
-    document.getElementById('toggleFormBtn').textContent = 'Hide Form';
-    
-    // Clear the form first
-    clearForm();
-    
-    // If continuing from last trip, load the data
-    if (continueLast) {
-        loadLastTripData();
-    } else {
-        // For blank form, just set today's date
-        document.getElementById('date').valueAsDate = new Date();
-    }
-}
-
-function calculateMiles() {
-    const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
-    const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
-    const miles = Math.max(0, endOdo - startOdo);
-    document.getElementById('milesDriven').textContent = miles.toFixed(1);
-}
-
-function calculateEndOdometer() {
-    const startOdo = parseFloat(document.getElementById('startOdometer').value);
-    const tripDistance = parseFloat(document.getElementById('tripDistance').value);
-    
-    if (!isNaN(startOdo) && !isNaN(tripDistance) && tripDistance > 0) {
-        const endOdo = startOdo + tripDistance;
-        document.getElementById('endOdometer').value = endOdo.toFixed(1);
-        calculateMiles();
-    }
-}
-
-function handleCategoryChange() {
-    const categorySelect = document.getElementById('purposeCategory');
-    const otherContainer = document.getElementById('otherCategoryContainer');
-    const detailsContainer = document.getElementById('purposeDetailContainer');
-    
-    // Always show the details container if a category is selected
-    if (categorySelect.value) {
-        detailsContainer.style.display = 'block';
-        
-        // Only show the "Other" input if "Other" is selected
-        if (categorySelect.value === 'Other') {
-            otherContainer.style.display = 'block';
-            document.getElementById('otherCategoryInput').focus();
-        } else {
-            otherContainer.style.display = 'none';
-            document.getElementById('purposeDetail').focus();
-        }
-    } else {
-        // Hide both if no category is selected
-        detailsContainer.style.display = 'none';
-        otherContainer.style.display = 'none';
-    }
-}
-
-// Get the complete purpose string combining category and details
-function getFullBusinessPurpose() {
-    const category = document.getElementById('purposeCategory').value;
-    const details = document.getElementById('purposeDetail').value.trim();
-    const otherInput = document.getElementById('otherCategoryInput').value.trim();
-    
-    if (!category) return '';
-    
-    // Use the custom category if "Other" is selected and has input
-    const finalCategory = (category === 'Other' && otherInput) ? otherInput : category;
-    
-    if (details) {
-        return `${finalCategory}: ${details}`;
-    } else {
-        return finalCategory;
-    }
-}
-
-function loadLastTripData() {
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        if (trips.length > 0) {
-            // Get the most recent trip
-            const lastTrip = trips[trips.length - 1];
-            
-            // Use last destination as new starting point, but leave destination blank
-            document.getElementById('startLocation').value = lastTrip.destination;
-            document.getElementById('destination').value = ''; // Leave destination blank
-            
-            // Handle purpose category and details
-            let category = '';
-            let details = '';
-            
-            if (lastTrip.purpose) {
-                // Split the purpose into category and details if it contains a colon
-                const colonIndex = lastTrip.purpose.indexOf(':');
-                if (colonIndex !== -1) {
-                    category = lastTrip.purpose.substring(0, colonIndex).trim();
-                    details = lastTrip.purpose.substring(colonIndex + 1).trim();
-                } else {
-                    category = lastTrip.purpose.trim();
-                }
-                
-                // Set category if it matches one of our options
-                const selectElement = document.getElementById('purposeCategory');
-                for (let i = 0; i < selectElement.options.length; i++) {
-                    if (selectElement.options[i].value === category) {
-                        selectElement.selectedIndex = i;
-                        handleCategoryChange();
-                        document.getElementById('purposeDetail').value = details;
-                        break;
-                    }
-                }
-                
-                // If no match found and it's not empty, set as "Other"
-                if (selectElement.value === '' && category) {
-                    // Find the "Other" option
-                    for (let i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === 'Other') {
-                            selectElement.selectedIndex = i;
-                            handleCategoryChange();
-                            document.getElementById('otherCategoryInput').value = category;
-                            document.getElementById('purposeDetail').value = details;
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            // Set the work status if available
-            if (lastTrip.workStatus) {
-                document.getElementById('workStatus').value = lastTrip.workStatus;
-            }
-            
-            // Set the ending odometer as the starting odometer
-            document.getElementById('startOdometer').value = lastTrip.endOdo;
-            
-            // Keep the same date as the last trip
-            document.getElementById('date').value = lastTrip.date;
-        }
-    }
-}
-
-function clearForm() {
-    // Clear all form inputs
-    document.getElementById('date').value = '';
-    document.getElementById('startLocation').value = '';
-    document.getElementById('destination').value = '';
-    document.getElementById('purposeCategory').value = '';
-    document.getElementById('purposeDetail').value = '';
-    document.getElementById('otherCategoryInput').value = '';
-    document.getElementById('workStatus').value = '';
-    document.getElementById('purposeDetailContainer').style.display = 'none';
-    document.getElementById('otherCategoryContainer').style.display = 'none';
-    document.getElementById('startOdometer').value = '';
-    document.getElementById('endOdometer').value = '';
-    document.getElementById('tripDistance').value = '';
-    document.getElementById('milesDriven').textContent = '0';
-}
-
-function saveTrip() {
-    const editId = document.getElementById('editTripId').value;
-    
-    if (editId) {
-        // We're editing an existing trip
-        updateTrip(editId);
-    } else {
-        // We're adding a new trip
-        addTrip();
-    }
-}
-
-function editTrip(tripId) {
-    // Get the trip data
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        const tripToEdit = trips.find(trip => trip.id === tripId);
-        
-        if (tripToEdit) {
-            // Set form to edit mode
-            document.getElementById('formTitle').textContent = 'Edit Trip';
-            document.getElementById('editTripId').value = tripId;
-            
-            // Fill the form with trip data - use the date string directly
-            document.getElementById('date').value = tripToEdit.date;
-            document.getElementById('startLocation').value = tripToEdit.startLocation;
-            document.getElementById('destination').value = tripToEdit.destination;
-            document.getElementById('startOdometer').value = tripToEdit.startOdo;
-            document.getElementById('endOdometer').value = tripToEdit.endOdo;
-            
-            // Set work status if available
-            if (tripToEdit.workStatus) {
-                document.getElementById('workStatus').value = tripToEdit.workStatus;
-            } else {
-                document.getElementById('workStatus').value = '';
-            }
-            
-            calculateMiles();
-            
-            // Handle the purpose field
-            let category = '';
-            let details = '';
-            
-            if (tripToEdit.purpose) {
-                // Split the purpose into category and details if it contains a colon
-                const colonIndex = tripToEdit.purpose.indexOf(':');
-                if (colonIndex !== -1) {
-                    category = tripToEdit.purpose.substring(0, colonIndex).trim();
-                    details = tripToEdit.purpose.substring(colonIndex + 1).trim();
-                } else {
-                    category = tripToEdit.purpose.trim();
-                }
-                
-                // Set category if it matches one of our options
-                const selectElement = document.getElementById('purposeCategory');
-                let categoryFound = false;
-                
-                for (let i = 0; i < selectElement.options.length; i++) {
-                    if (selectElement.options[i].value === category) {
-                        selectElement.selectedIndex = i;
-                        categoryFound = true;
-                        handleCategoryChange();
-                        document.getElementById('purposeDetail').value = details;
-                        break;
-                    }
-                }
-                
-                // If no match found and it's not empty, set as "Other"
-                if (!categoryFound && category) {
-                    // Find the "Other" option
-                    for (let i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === 'Other') {
-                            selectElement.selectedIndex = i;
-                            handleCategoryChange();
-                            document.getElementById('otherCategoryInput').value = category;
-                            document.getElementById('purposeDetail').value = details;
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            // Show the form
-            document.getElementById('formOptions').style.display = 'none';
-            document.getElementById('tripForm').style.display = 'block';
-            document.getElementById('toggleFormBtn').textContent = 'Hide Form';
-            
-            // Calculate trip distance if not already set
-            if (!document.getElementById('tripDistance').value) {
-                const start = parseFloat(tripToEdit.startOdo);
-                const end = parseFloat(tripToEdit.endOdo);
-                if (!isNaN(start) && !isNaN(end)) {
-                    document.getElementById('tripDistance').value = (end - start).toFixed(1);
-                }
-            }
-        }
-    }
-}
-
-function updateTrip(tripId) {
-    const date = document.getElementById('date').value;
-    const startLocation = document.getElementById('startLocation').value;
-    const destination = document.getElementById('destination').value;
-    const purposeCategory = document.getElementById('purposeCategory').value;
-    const workStatus = document.getElementById('workStatus').value;
-    const startOdo = document.getElementById('startOdometer').value;
-    const endOdo = document.getElementById('endOdometer').value;
-    
-    // Get the full purpose string (combining category and details)
-    const purpose = getFullBusinessPurpose();
-    
-    if (!date || !startLocation || !destination || !purposeCategory || !workStatus || !startOdo || !endOdo) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
-    
-    if (miles <= 0) {
-        alert('Ending odometer reading must be greater than starting reading');
-        return;
-    }
-    
-    // Get existing data
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        let trips = JSON.parse(savedData);
-        
-        // Find the trip to update
-        const tripIndex = trips.findIndex(trip => trip.id == tripId);
-        
-        if (tripIndex !== -1) {
-            // Update the trip
-            trips[tripIndex] = {
-                ...trips[tripIndex],
-                date: date, // Store the exact date string from the input
-                startLocation: startLocation,
-                destination: destination,
-                purpose: purpose,
-                workStatus: workStatus,
-                startOdo: startOdo,
-                endOdo: endOdo,
-                miles: miles
-            };
-            
-            // Save updated data
-            localStorage.setItem('mileageData', JSON.stringify(trips));
-            
-            // Reset form and UI
-            resetFormAfterSave();
-            
-            // Update display
-            renderTripsList();
-            updateSummary();
-        }
-    }
-}
-
-function addTrip() {
-    const date = document.getElementById('date').value;
-    const startLocation = document.getElementById('startLocation').value;
-    const destination = document.getElementById('destination').value;
-    const purposeCategory = document.getElementById('purposeCategory').value;
-    const workStatus = document.getElementById('workStatus').value;
-    const startOdo = document.getElementById('startOdometer').value;
-    const endOdo = document.getElementById('endOdometer').value;
-    
-    // Get the full purpose string (combining category and details)
-    const purpose = getFullBusinessPurpose();
-    
-    if (!date || !startLocation || !destination || !purposeCategory || !workStatus || !startOdo || !endOdo) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
-    
-    if (miles <= 0) {
-        alert('Ending odometer reading must be greater than starting reading');
-        return;
-    }
-    
-    // Get existing data or initialize new array
-    let trips = [];
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        trips = JSON.parse(savedData);
-    }
-    
-    // IMPORTANT: Store the date string exactly as it is without Date object conversion
-    // This prevents timezone issues that can shift the day
-    
-    // Add new trip to array
-    trips.push({
-        date: date, // Store the exact date string from the input
-        startLocation: startLocation,
-        destination: destination,
-        purpose: purpose,
-        workStatus: workStatus,
-        startOdo: startOdo,
-        endOdo: endOdo,
-        miles: miles,
-        id: Date.now() // Unique ID for easier deletion
-    });
-    
-    // Save updated data
-    localStorage.setItem('mileageData', JSON.stringify(trips));
-    
-    // Reset form and UI
-    resetFormAfterSave();
-    
-    // Update display
-    renderTripsList();
-    updateSummary();
-}
-
-function resetFormAfterSave() {
-    // Reset edit mode
-    document.getElementById('formTitle').textContent = 'Add New Trip';
-    document.getElementById('editTripId').value = '';
-    
-    // Clear form
-    clearForm();
-    
-    // Hide form
-    document.getElementById('tripForm').style.display = 'none';
-    document.getElementById('toggleFormBtn').textContent = 'Add New Trip';
-}
-
-function cancelEdit() {
-    resetFormAfterSave();
-}
-
-function deleteTrip(tripId) {
-    if (confirm('Are you sure you want to delete this trip?')) {
-        // Get current data
-        const savedData = localStorage.getItem('mileageData');
-        if (savedData) {
-            let trips = JSON.parse(savedData);
-            // Filter out the trip to delete
-            trips = trips.filter(trip => trip.id !== tripId);
-            // Save updated data
-            localStorage.setItem('mileageData', JSON.stringify(trips));
-            // Refresh display
-            renderTripsList();
-            updateSummary();
-        }
-    }
-}
-
-function renderTripsList() {
-    const tripsList = document.getElementById('tripsList');
-    tripsList.innerHTML = '';
-    
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        
-        if (trips.length === 0) {
-            tripsList.innerHTML = '<p class="empty-list-message">No trips added yet. Use the form above to add your first trip.</p>';
-            return;
-        }
-        
-        // Sort trips by date (newest first)
-        // Use a custom sorting function that handles string dates correctly
-        trips.sort((a, b) => {
-            // Try to compare dates as strings first (in YYYY-MM-DD format)
-            if (a.date > b.date) return -1;
-            if (a.date < b.date) return 1;
-            return 0;
-        });
-        
-        // Create table for trips
-        const table = document.createElement('table');
-        table.className = 'trips-list-table';
-        
-        // Add table header
-        const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <tr>
-                <th>Date</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Purpose</th>
-                <th>Status</th>
-                <th>Miles</th>
-                <th>Actions</th>
-            </tr>
-        `;
-        table.appendChild(thead);
-        
-        // Add table body
-        const tbody = document.createElement('tbody');
-        
-        for (const trip of trips) {
-            // Format date for display - use a safe approach that won't shift dates
-            let formattedDate = trip.date;
-            
-            // If the date is in YYYY-MM-DD format, convert it to a more readable format
-            if (/^\d{4}-\d{2}-\d{2}$/.test(trip.date)) {
-                const [year, month, day] = trip.date.split('-');
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                formattedDate = `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
-            }
-            
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${formattedDate}</td>
-                <td>${trip.startLocation}</td>
-                <td>${trip.destination}</td>
-                <td class="table-purpose">${trip.purpose}</td>
-                <td>${trip.workStatus || 'Not specified'}</td>
+</html>
