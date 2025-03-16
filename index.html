@@ -559,28 +559,8 @@ function editTrip(tripId) {
             document.getElementById('formTitle').textContent = 'Edit Trip';
             document.getElementById('editTripId').value = tripId;
             
-            // Fill the form with trip data
-            // Ensure date is in proper YYYY-MM-DD format for the date input
-            if (tripToEdit.date) {
-                // Try to parse and format the date correctly
-                try {
-                    const dateObj = new Date(tripToEdit.date);
-                    if (!isNaN(dateObj.getTime())) {
-                        // Format date as YYYY-MM-DD for date input
-                        const year = dateObj.getFullYear();
-                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-                        const day = String(dateObj.getDate()).padStart(2, '0');
-                        document.getElementById('date').value = `${year}-${month}-${day}`;
-                    } else {
-                        // If date is invalid, just use the string as-is
-                        document.getElementById('date').value = tripToEdit.date;
-                    }
-                } catch (e) {
-                    // If there's an error parsing, just use the string as-is
-                    document.getElementById('date').value = tripToEdit.date;
-                }
-            }
-            
+            // Fill the form with trip data - use the date string directly
+            document.getElementById('date').value = tripToEdit.date;
             document.getElementById('startLocation').value = tripToEdit.startLocation;
             document.getElementById('destination').value = tripToEdit.destination;
             document.getElementById('startOdometer').value = tripToEdit.startOdo;
@@ -691,18 +671,6 @@ function updateTrip(tripId) {
         return;
     }
     
-    // Format the date consistently to ensure it can be loaded properly later
-    let formattedDate = date;
-    try {
-        const dateObj = new Date(date);
-        if (!isNaN(dateObj.getTime())) {
-            formattedDate = dateObj.toISOString().split('T')[0]; // YYYY-MM-DD format
-        }
-    } catch (e) {
-        // If error parsing, use original string
-        console.error("Date parsing error:", e);
-    }
-    
     // Get existing data
     const savedData = localStorage.getItem('mileageData');
     if (savedData) {
@@ -715,7 +683,7 @@ function updateTrip(tripId) {
             // Update the trip
             trips[tripIndex] = {
                 ...trips[tripIndex],
-                date: formattedDate,
+                date: date, // Store the exact date string from the input
                 startLocation: startLocation,
                 destination: destination,
                 purpose: purpose,
@@ -769,21 +737,12 @@ function addTrip() {
         trips = JSON.parse(savedData);
     }
     
-    // Format the date consistently to ensure it can be loaded properly later
-    let formattedDate = date;
-    try {
-        const dateObj = new Date(date);
-        if (!isNaN(dateObj.getTime())) {
-            formattedDate = dateObj.toISOString().split('T')[0]; // YYYY-MM-DD format
-        }
-    } catch (e) {
-        // If error parsing, use original string
-        console.error("Date parsing error:", e);
-    }
+    // IMPORTANT: Store the date string exactly as it is without Date object conversion
+    // This prevents timezone issues that can shift the day
     
     // Add new trip to array
     trips.push({
-        date: formattedDate,
+        date: date, // Store the exact date string from the input
         startLocation: startLocation,
         destination: destination,
         purpose: purpose,
@@ -853,27 +812,26 @@ function renderTripsList() {
         }
         
         // Sort trips by date (newest first)
+        // Use a custom sorting function that handles string dates correctly
         trips.sort((a, b) => {
-            const dateA = new Date(a.date);
-            const dateB = new Date(b.date);
-            return dateB - dateA;
+            // Try to compare dates as strings first (in YYYY-MM-DD format)
+            if (a.date > b.date) return -1;
+            if (a.date < b.date) return 1;
+            return 0;
         });
         
         for (const trip of trips) {
             const tripCard = document.createElement('div');
             tripCard.className = 'card-view';
             
-            // Format date for better display
-            let formattedDate;
-            try {
-                const tripDate = new Date(trip.date);
-                if (!isNaN(tripDate.getTime())) {
-                    formattedDate = tripDate.toLocaleDateString();
-                } else {
-                    formattedDate = trip.date; // Use as-is if can't parse
-                }
-            } catch (e) {
-                formattedDate = trip.date; // Use as-is if error
+            // Format date for display - use a safe approach that won't shift dates
+            let formattedDate = trip.date;
+            
+            // If the date is in YYYY-MM-DD format, convert it to a more readable format
+            if (/^\d{4}-\d{2}-\d{2}$/.test(trip.date)) {
+                const [year, month, day] = trip.date.split('-');
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                formattedDate = `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
             }
             
             tripCard.innerHTML = `
