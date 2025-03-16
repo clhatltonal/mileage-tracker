@@ -923,20 +923,7 @@ function renderTripsList() {
     }
 }
             
-            tripCard.innerHTML = `
-                <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
-                <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
-                <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
-                <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
-                <div><span class="label">Status:</span> <span class="value">${trip.workStatus || 'Not specified'}</span></div>
-                <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
-                <div class="card-buttons">
-                    <button class="edit-btn" onclick="editTrip(${trip.id})">Edit</button>
-                    <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
-                </div>
-            `;
-            
-            tripsList.appendChild(tripCard);
+
         }
     } else {
         tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
