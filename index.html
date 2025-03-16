@@ -283,12 +283,20 @@
                     <label for="equipment">Equipment Pick Up/Drop Off</label>
                 </div>
                 <div class="form-group">
+                    <input type="radio" id="onSiteClient" name="category" value="On Site with Client">
+                    <label for="onSiteClient">On Site with Client</label>
+                </div>
+                <div class="form-group">
                     <input type="radio" id="clientMisc" name="category" value="Client MISC">
                     <label for="clientMisc">Client MISC</label>
                 </div>
                 <div class="form-group">
                     <input type="radio" id="other" name="category" value="Other">
                     <label for="other">Other</label>
+                </div>
+                <div class="form-group" id="otherCategoryGroup" style="display:none;">
+                    <label for="otherCategory">Specify:</label>
+                    <input type="text" id="otherCategory" placeholder="Enter custom category">
                 </div>
             </div>
             <div class="buttons">
@@ -308,6 +316,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for automatic miles calculation
     document.getElementById('startOdometer').addEventListener('input', calculateMiles);
     document.getElementById('endOdometer').addEventListener('input', calculateMiles);
+    
+    // Close dialogs if user clicks outside
+    document.addEventListener('click', function(event) {
+        const odometerDialog = document.getElementById('odometerDialog');
+        const categoryDialog = document.getElementById('categoryDialog');
+        
+        if (event.target.classList.contains('dialog-overlay')) {
+            odometerDialog.style.display = 'none';
+            categoryDialog.style.display = 'none';
+        }
+    });
 });
 
 function toggleTripForm() {
@@ -349,6 +368,10 @@ function showCategoryDialog() {
         // Clear any previously selected categories
         const radioButtons = document.querySelectorAll('input[name="category"]');
         radioButtons.forEach(button => button.checked = false);
+        
+        // Hide the custom category input
+        document.getElementById('otherCategoryGroup').style.display = 'none';
+        document.getElementById('otherCategory').value = '';
     }
 }
 
@@ -360,12 +383,42 @@ function applyCategory() {
     const selectedCategory = document.querySelector('input[name="category"]:checked');
     if (selectedCategory) {
         const currentPurpose = document.getElementById('purpose').value.trim();
-        document.getElementById('purpose').value = `${selectedCategory.value}: ${currentPurpose}`;
+        let categoryText = selectedCategory.value;
+        
+        // If "Other" is selected, use the custom category text
+        if (selectedCategory.id === 'other' && document.getElementById('otherCategory').value.trim()) {
+            categoryText = document.getElementById('otherCategory').value.trim();
+        }
+        
+        document.getElementById('purpose').value = `${categoryText}: ${currentPurpose}`;
         closeCategoryDialog();
     } else {
         alert('Please select a category');
     }
 }
+
+// Add event listener for the "Other" radio button
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
+    
+    // Add listener for the "Other" category
+    document.getElementById('other').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('otherCategoryGroup').style.display = 'block';
+            document.getElementById('otherCategory').focus();
+        } else {
+            document.getElementById('otherCategoryGroup').style.display = 'none';
+        }
+    });
+    
+    // Add listeners for other category options to hide the custom field
+    const otherCategories = document.querySelectorAll('input[name="category"]:not(#other)');
+    otherCategories.forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.getElementById('otherCategoryGroup').style.display = 'none';
+        });
+    });
+});
 
 function calculateEndOdometer() {
     const startOdo = parseFloat(document.getElementById('startOdometer').value);
