@@ -50,23 +50,13 @@
             margin-bottom: 3px;
             font-size: 0.9rem;
         }
-        .form-group input, .form-group textarea, .form-group select {
+        .form-group input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 1rem;
             box-sizing: border-box;
-        }
-        
-        .category-tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            background-color: #3498db;
-            color: white;
-            font-size: 0.8rem;
-            margin-right: 5px;
         }
         input[type="number"] {
             -moz-appearance: textfield;
@@ -132,6 +122,39 @@
         .toggle-form-btn:hover {
             background-color: #8e44ad;
         }
+        .dialog-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+        }
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .dialog-box .buttons {
+            flex-direction: row;
+            margin-top: 20px;
+        }
+        .dialog-box button {
+            flex: 1;
+        }
+        .dialog-box h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
         @media (min-width: 768px) {
             body {
                 margin: 20px;
@@ -172,28 +195,12 @@
             <input type="text" id="destination" placeholder="Client site, Meeting, etc.">
         </div>
         <div class="form-group">
-            <label for="category">Trip Category:</label>
-            <select id="category" class="form-select">
-                <option value="">-- Select a category --</option>
-                <option value="Client Meetings">Client Meetings</option>
-                <option value="Filming">Filming</option>
-                <option value="Pick Up Equipment">Pick Up Equipment</option>
-                <option value="Drop Off Equipment">Drop Off Equipment</option>
-                <option value="Training">Training</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-        <div class="form-group" id="otherCategoryContainer" style="display:none;">
-            <label for="otherCategory">Specify Other Category:</label>
-            <input type="text" id="otherCategory" placeholder="Enter trip category">
-        </div>
-        <div class="form-group">
-            <label for="purpose">Business Purpose/Notes:</label>
-            <textarea id="purpose" placeholder="Details about this business trip..." rows="2"></textarea>
+            <label for="purpose">Business Purpose:</label>
+            <input type="text" id="purpose" placeholder="Client meeting, Delivery, etc.">
         </div>
         <div class="form-group">
             <label for="startOdometer">Starting Odometer:</label>
-            <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric">
+            <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric" onchange="showOdometerDialog()">
         </div>
         <div class="form-group">
             <label for="endOdometer">Ending Odometer:</label>
@@ -219,6 +226,23 @@
         <button onclick="clearAll()">Clear All</button>
     </div>
 
+    <!-- Dialog for odometer reading -->
+    <div id="odometerDialog" style="display:none;">
+        <div class="dialog-overlay"></div>
+        <div class="dialog-box">
+            <h3>Add Trip Distance</h3>
+            <p>How many miles will you drive for this trip?</p>
+            <div class="form-group">
+                <label for="tripDistance">Trip Distance (miles):</label>
+                <input type="number" id="tripDistance" placeholder="Enter miles" inputmode="numeric">
+            </div>
+            <div class="buttons">
+                <button onclick="calculateEndOdometer()">Add</button>
+                <button onclick="closeOdometerDialog()" style="background-color: #7f8c8d;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
 <script>
 // Load saved data from localStorage if available
 document.addEventListener('DOMContentLoaded', function() {
@@ -229,16 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for automatic miles calculation
     document.getElementById('startOdometer').addEventListener('input', calculateMiles);
     document.getElementById('endOdometer').addEventListener('input', calculateMiles);
-    
-    // Show "Other" category input when "Other" is selected
-    document.getElementById('category').addEventListener('change', function() {
-        const otherContainer = document.getElementById('otherCategoryContainer');
-        if (this.value === 'Other') {
-            otherContainer.style.display = 'block';
-        } else {
-            otherContainer.style.display = 'none';
-        }
-    });
 });
 
 function toggleTripForm() {
@@ -260,20 +274,43 @@ function calculateMiles() {
     document.getElementById('milesDriven').textContent = miles.toFixed(1);
 }
 
+function showOdometerDialog() {
+    const startOdo = parseFloat(document.getElementById('startOdometer').value);
+    if (!isNaN(startOdo)) {
+        document.getElementById('odometerDialog').style.display = 'block';
+        document.getElementById('tripDistance').focus();
+    }
+}
+
+function closeOdometerDialog() {
+    document.getElementById('odometerDialog').style.display = 'none';
+    document.getElementById('tripDistance').value = '';
+}
+
+function calculateEndOdometer() {
+    const startOdo = parseFloat(document.getElementById('startOdometer').value);
+    const tripDistance = parseFloat(document.getElementById('tripDistance').value);
+    
+    if (!isNaN(startOdo) && !isNaN(tripDistance) && tripDistance > 0) {
+        const endOdo = startOdo + tripDistance;
+        document.getElementById('endOdometer').value = endOdo.toFixed(1);
+        calculateMiles();
+        closeOdometerDialog();
+    } else {
+        alert('Please enter a valid trip distance.');
+    }
+}
+
 function addTrip() {
     const date = document.getElementById('date').value;
     const startLocation = document.getElementById('startLocation').value;
     const destination = document.getElementById('destination').value;
-    const categorySelect = document.getElementById('category');
-    const category = categorySelect.value === 'Other' ? 
-                     document.getElementById('otherCategory').value : 
-                     categorySelect.value;
     const purpose = document.getElementById('purpose').value;
     const startOdo = document.getElementById('startOdometer').value;
     const endOdo = document.getElementById('endOdometer').value;
     
-    if (!date || !startLocation || !destination || !category || !startOdo || !endOdo) {
-        alert('Please fill in all required fields');
+    if (!date || !startLocation || !destination || !purpose || !startOdo || !endOdo) {
+        alert('Please fill in all fields');
         return;
     }
     
@@ -296,7 +333,6 @@ function addTrip() {
         date: date,
         startLocation: startLocation,
         destination: destination,
-        category: category,
         purpose: purpose,
         startOdo: startOdo,
         endOdo: endOdo,
@@ -311,9 +347,6 @@ function addTrip() {
     document.getElementById('date').value = '';
     document.getElementById('startLocation').value = '';
     document.getElementById('destination').value = '';
-    document.getElementById('category').value = '';
-    document.getElementById('otherCategory').value = '';
-    document.getElementById('otherCategoryContainer').style.display = 'none';
     document.getElementById('purpose').value = '';
     document.getElementById('startOdometer').value = '';
     document.getElementById('endOdometer').value = '';
@@ -367,11 +400,10 @@ function renderTripsList() {
             const formattedDate = tripDate.toLocaleDateString();
             
             tripCard.innerHTML = `
-                <div><span class="category-tag">${trip.category || 'Uncategorized'}</span></div>
                 <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
                 <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
                 <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
-                ${trip.purpose ? `<div><span class="label">Notes:</span> <span class="value">${trip.purpose}</span></div>` : ''}
+                <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
                 <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
                 <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
             `;
@@ -407,15 +439,14 @@ function exportToCSV() {
     }
     
     const trips = JSON.parse(savedData);
-    let csv = 'Date,Starting Location,Destination,Category,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
+    let csv = 'Date,Starting Location,Destination,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
     
     for (const trip of trips) {
         const rowData = [
             trip.date,
             '"' + trip.startLocation + '"',
             '"' + trip.destination + '"',
-            '"' + (trip.category || 'Uncategorized') + '"',
-            '"' + (trip.purpose || '') + '"',
+            '"' + trip.purpose + '"',
             trip.startOdo,
             trip.endOdo,
             trip.miles
