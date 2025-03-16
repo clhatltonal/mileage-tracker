@@ -50,7 +50,7 @@
             margin-bottom: 3px;
             font-size: 0.9rem;
         }
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -211,8 +211,25 @@
             <input type="text" id="destination" placeholder="Client site, Meeting, etc.">
         </div>
         <div class="form-group">
-            <label for="purpose">Business Purpose:</label>
-            <input type="text" id="purpose" placeholder="Client meeting, Delivery, etc." onchange="showCategoryDialog()">
+            <label for="purpose">Business Purpose Category:</label>
+            <select id="purposeCategory" onchange="handleCategoryChange()">
+                <option value="">-- Select a Category --</option>
+                <option value="Client Meetings">Client Meetings</option>
+                <option value="Client Lunch">Client Lunch</option>
+                <option value="Filming">Filming</option>
+                <option value="Equipment Pick Up/Drop Off">Equipment Pick Up/Drop Off</option>
+                <option value="On Site with Client">On Site with Client</option>
+                <option value="Client MISC">Client MISC</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group" id="purposeDetailContainer" style="display:none;">
+            <label for="purposeDetail">Business Purpose Details:</label>
+            <input type="text" id="purposeDetail" placeholder="Enter specific details">
+        </div>
+        <div class="form-group" id="otherCategoryContainer" style="display:none;">
+            <label for="otherCategoryInput">Specify Other Category:</label>
+            <input type="text" id="otherCategoryInput" placeholder="Enter custom category">
         </div>
         <div class="form-group">
             <label for="startOdometer">Starting Odometer:</label>
@@ -259,52 +276,7 @@
         </div>
     </div>
 
-    <!-- Dialog for business purpose category -->
-    <div id="categoryDialog" style="display:none;">
-        <div class="dialog-overlay"></div>
-        <div class="dialog-box">
-            <h3>Select Business Purpose Category</h3>
-            <p>Choose a category for this trip:</p>
-            <div class="category-options">
-                <div class="form-group">
-                    <input type="radio" id="clientMeeting" name="category" value="Client Meetings">
-                    <label for="clientMeeting">Client Meetings</label>
-                </div>
-                <div class="form-group">
-                    <input type="radio" id="clientLunch" name="category" value="Client Lunch">
-                    <label for="clientLunch">Client Lunch</label>
-                </div>
-                <div class="form-group">
-                    <input type="radio" id="filming" name="category" value="Filming">
-                    <label for="filming">Filming</label>
-                </div>
-                <div class="form-group">
-                    <input type="radio" id="equipment" name="category" value="Equipment Pick Up/Drop Off">
-                    <label for="equipment">Equipment Pick Up/Drop Off</label>
-                </div>
-                <div class="form-group">
-                    <input type="radio" id="onSiteClient" name="category" value="On Site with Client">
-                    <label for="onSiteClient">On Site with Client</label>
-                </div>
-                <div class="form-group">
-                    <input type="radio" id="clientMisc" name="category" value="Client MISC">
-                    <label for="clientMisc">Client MISC</label>
-                </div>
-                <div class="form-group">
-                    <input type="radio" id="other" name="category" value="Other">
-                    <label for="other">Other</label>
-                </div>
-                <div class="form-group" id="otherCategoryGroup" style="display:none;">
-                    <label for="otherCategory">Specify:</label>
-                    <input type="text" id="otherCategory" placeholder="Enter custom category">
-                </div>
-            </div>
-            <div class="buttons">
-                <button onclick="applyCategory()">Apply</button>
-                <button onclick="closeCategoryDialog()" style="background-color: #7f8c8d;">Cancel</button>
-            </div>
-        </div>
-    </div>
+
 
 <script>
 // Load saved data from localStorage if available
@@ -361,64 +333,47 @@ function closeOdometerDialog() {
     document.getElementById('tripDistance').value = '';
 }
 
-function showCategoryDialog() {
-    const purpose = document.getElementById('purpose').value.trim();
-    if (purpose) {
-        document.getElementById('categoryDialog').style.display = 'block';
-        // Clear any previously selected categories
-        const radioButtons = document.querySelectorAll('input[name="category"]');
-        radioButtons.forEach(button => button.checked = false);
-        
-        // Hide the custom category input
-        document.getElementById('otherCategoryGroup').style.display = 'none';
-        document.getElementById('otherCategory').value = '';
-    }
-}
-
-function closeCategoryDialog() {
-    document.getElementById('categoryDialog').style.display = 'none';
-}
-
-function applyCategory() {
-    const selectedCategory = document.querySelector('input[name="category"]:checked');
-    if (selectedCategory) {
-        const currentPurpose = document.getElementById('purpose').value.trim();
-        let categoryText = selectedCategory.value;
-        
-        // If "Other" is selected, use the custom category text
-        if (selectedCategory.id === 'other' && document.getElementById('otherCategory').value.trim()) {
-            categoryText = document.getElementById('otherCategory').value.trim();
-        }
-        
-        document.getElementById('purpose').value = `${categoryText}: ${currentPurpose}`;
-        closeCategoryDialog();
-    } else {
-        alert('Please select a category');
-    }
-}
-
-// Add event listener for the "Other" radio button
-document.addEventListener('DOMContentLoaded', function() {
-    // ... existing code ...
+function handleCategoryChange() {
+    const categorySelect = document.getElementById('purposeCategory');
+    const otherContainer = document.getElementById('otherCategoryContainer');
+    const detailsContainer = document.getElementById('purposeDetailContainer');
     
-    // Add listener for the "Other" category
-    document.getElementById('other').addEventListener('change', function() {
-        if (this.checked) {
-            document.getElementById('otherCategoryGroup').style.display = 'block';
-            document.getElementById('otherCategory').focus();
+    // Always show the details container if a category is selected
+    if (categorySelect.value) {
+        detailsContainer.style.display = 'block';
+        
+        // Only show the "Other" input if "Other" is selected
+        if (categorySelect.value === 'Other') {
+            otherContainer.style.display = 'block';
+            document.getElementById('otherCategoryInput').focus();
         } else {
-            document.getElementById('otherCategoryGroup').style.display = 'none';
+            otherContainer.style.display = 'none';
+            document.getElementById('purposeDetail').focus();
         }
-    });
+    } else {
+        // Hide both if no category is selected
+        detailsContainer.style.display = 'none';
+        otherContainer.style.display = 'none';
+    }
+}
+
+// Get the complete purpose string combining category and details
+function getFullBusinessPurpose() {
+    const category = document.getElementById('purposeCategory').value;
+    const details = document.getElementById('purposeDetail').value.trim();
+    const otherInput = document.getElementById('otherCategoryInput').value.trim();
     
-    // Add listeners for other category options to hide the custom field
-    const otherCategories = document.querySelectorAll('input[name="category"]:not(#other)');
-    otherCategories.forEach(radio => {
-        radio.addEventListener('change', function() {
-            document.getElementById('otherCategoryGroup').style.display = 'none';
-        });
-    });
-});
+    if (!category) return '';
+    
+    // Use the custom category if "Other" is selected and has input
+    const finalCategory = (category === 'Other' && otherInput) ? otherInput : category;
+    
+    if (details) {
+        return `${finalCategory}: ${details}`;
+    } else {
+        return finalCategory;
+    }
+}
 
 function calculateEndOdometer() {
     const startOdo = parseFloat(document.getElementById('startOdometer').value);
@@ -438,12 +393,15 @@ function addTrip() {
     const date = document.getElementById('date').value;
     const startLocation = document.getElementById('startLocation').value;
     const destination = document.getElementById('destination').value;
-    const purpose = document.getElementById('purpose').value;
+    const purposeCategory = document.getElementById('purposeCategory').value;
     const startOdo = document.getElementById('startOdometer').value;
     const endOdo = document.getElementById('endOdometer').value;
     
-    if (!date || !startLocation || !destination || !purpose || !startOdo || !endOdo) {
-        alert('Please fill in all fields');
+    // Get the full purpose string (combining category and details)
+    const purpose = getFullBusinessPurpose();
+    
+    if (!date || !startLocation || !destination || !purposeCategory || !startOdo || !endOdo) {
+        alert('Please fill in all required fields');
         return;
     }
     
@@ -480,7 +438,11 @@ function addTrip() {
     document.getElementById('date').value = '';
     document.getElementById('startLocation').value = '';
     document.getElementById('destination').value = '';
-    document.getElementById('purpose').value = '';
+    document.getElementById('purposeCategory').value = '';
+    document.getElementById('purposeDetail').value = '';
+    document.getElementById('otherCategoryInput').value = '';
+    document.getElementById('purposeDetailContainer').style.display = 'none';
+    document.getElementById('otherCategoryContainer').style.display = 'none';
     document.getElementById('startOdometer').value = '';
     document.getElementById('endOdometer').value = '';
     document.getElementById('milesDriven').textContent = '0';
