@@ -233,11 +233,15 @@
         </div>
         <div class="form-group">
             <label for="startOdometer">Starting Odometer:</label>
-            <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric" onchange="showOdometerDialog()">
+            <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric" onchange="calculateMiles()">
+        </div>
+        <div class="form-group" id="tripDistanceContainer">
+            <label for="tripDistance">Trip Distance (miles):</label>
+            <input type="number" id="tripDistance" placeholder="Enter expected miles" inputmode="numeric" onchange="calculateEndOdometer()">
         </div>
         <div class="form-group">
             <label for="endOdometer">Ending Odometer:</label>
-            <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric">
+            <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric" onchange="calculateMiles()">
         </div>
         <div class="form-group">
             <label>Miles Driven:</label>
@@ -259,22 +263,7 @@
         <button onclick="clearAll()">Clear All</button>
     </div>
 
-    <!-- Dialog for odometer reading -->
-    <div id="odometerDialog" style="display:none;">
-        <div class="dialog-overlay"></div>
-        <div class="dialog-box">
-            <h3>Add Trip Distance</h3>
-            <p>How many miles will you drive for this trip?</p>
-            <div class="form-group">
-                <label for="tripDistance">Trip Distance (miles):</label>
-                <input type="number" id="tripDistance" placeholder="Enter miles" inputmode="numeric">
-            </div>
-            <div class="buttons">
-                <button onclick="calculateEndOdometer()">Add</button>
-                <button onclick="closeOdometerDialog()" style="background-color: #7f8c8d;">Cancel</button>
-            </div>
-        </div>
-    </div>
+
 
 
 
