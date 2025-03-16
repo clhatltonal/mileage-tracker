@@ -1,4 +1,48 @@
-.location-input-container {
+.trips-list-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .trips-list-table th {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .trips-list-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        .trips-list-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .trips-list-table tr:hover {
+            background-color: #f0f7fb;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .trips-list-table th:last-child,
+        .trips-list-table td:last-child {
+            text-align: center;
+        }
+        .table-purpose {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .empty-list-message {
+            text-align: center;
+            color: #777;
+            margin: 20px 0;
+        }        .location-input-container {
             position: relative;
             width: 100%;
         }
@@ -807,7 +851,7 @@ function renderTripsList() {
         const trips = JSON.parse(savedData);
         
         if (trips.length === 0) {
-            tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
+            tripsList.innerHTML = '<p class="empty-list-message">No trips added yet. Use the form above to add your first trip.</p>';
             return;
         }
         
@@ -820,10 +864,29 @@ function renderTripsList() {
             return 0;
         });
         
+        // Create table for trips
+        const table = document.createElement('table');
+        table.className = 'trips-list-table';
+        
+        // Add table header
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th>Date</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Miles</th>
+                <th>Actions</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+        
+        // Add table body
+        const tbody = document.createElement('tbody');
+        
         for (const trip of trips) {
-            const tripCard = document.createElement('div');
-            tripCard.className = 'card-view';
-            
             // Format date for display - use a safe approach that won't shift dates
             let formattedDate = trip.date;
             
@@ -834,20 +897,33 @@ function renderTripsList() {
                 formattedDate = `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
             }
             
-            tripCard.innerHTML = `
-                <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
-                <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
-                <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
-                <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
-                <div><span class="label">Status:</span> <span class="value">${trip.workStatus || 'Not specified'}</span></div>
-                <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
-                <div class="card-buttons">
-                    <button class="edit-btn" onclick="editTrip(${trip.id})">Edit</button>
-                    <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
-                </div>
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formattedDate}</td>
+                <td>${trip.startLocation}</td>
+                <td>${trip.destination}</td>
+                <td class="table-purpose">${trip.purpose}</td>
+                <td>${trip.workStatus || 'Not specified'}</td>
+                <td>${trip.miles}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="edit-btn" onclick="editTrip(${trip.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
+                    </div>
+                </td>
             `;
             
-            tripsList.appendChild(tripCard);
+            tbody.appendChild(tr);
+        }
+        
+        table.appendChild(tbody);
+        tripsList.appendChild(table);
+    } else {
+        tripsList.innerHTML = '<p class="empty-list-message">No trips added yet. Use the form above to add your first trip.</p>';
+    }
+}
+            
+
         }
     } else {
         tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
