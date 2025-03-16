@@ -307,9 +307,73 @@ function toggleTripForm() {
     if (form.style.display === 'none') {
         form.style.display = 'block';
         btn.textContent = 'Hide Form';
+        
+        // Load last trip data when opening the form
+        loadLastTripData();
     } else {
         form.style.display = 'none';
         btn.textContent = 'Add New Trip';
+    }
+}
+
+function loadLastTripData() {
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        const trips = JSON.parse(savedData);
+        if (trips.length > 0) {
+            // Get the most recent trip
+            const lastTrip = trips[trips.length - 1];
+            
+            // Pre-fill the form with last trip's data
+            document.getElementById('startLocation').value = lastTrip.startLocation;
+            document.getElementById('destination').value = lastTrip.destination;
+            
+            // Handle purpose category and details
+            let category = '';
+            let details = '';
+            
+            if (lastTrip.purpose) {
+                // Split the purpose into category and details if it contains a colon
+                const colonIndex = lastTrip.purpose.indexOf(':');
+                if (colonIndex !== -1) {
+                    category = lastTrip.purpose.substring(0, colonIndex).trim();
+                    details = lastTrip.purpose.substring(colonIndex + 1).trim();
+                } else {
+                    category = lastTrip.purpose.trim();
+                }
+                
+                // Set category if it matches one of our options
+                const selectElement = document.getElementById('purposeCategory');
+                for (let i = 0; i < selectElement.options.length; i++) {
+                    if (selectElement.options[i].value === category) {
+                        selectElement.selectedIndex = i;
+                        handleCategoryChange();
+                        document.getElementById('purposeDetail').value = details;
+                        break;
+                    }
+                }
+                
+                // If no match found and it's not empty, set as "Other"
+                if (selectElement.value === '' && category) {
+                    // Find the "Other" option
+                    for (let i = 0; i < selectElement.options.length; i++) {
+                        if (selectElement.options[i].value === 'Other') {
+                            selectElement.selectedIndex = i;
+                            handleCategoryChange();
+                            document.getElementById('otherCategoryInput').value = category;
+                            document.getElementById('purposeDetail').value = details;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Set the ending odometer as the starting odometer
+            document.getElementById('startOdometer').value = lastTrip.endOdo;
+            
+            // Current date for the new trip
+            document.getElementById('date').valueAsDate = new Date();
+        }
     }
 }
 
