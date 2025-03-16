@@ -10,50 +10,12 @@
             margin: 10px;
             max-width: 100%;
             overflow-x: hidden;
-            color: #333;
-        }
-        h1, h2, h3 {
-            color: #2c3e50;
         }
         h1 {
             text-align: center;
+            color: #2c3e50;
             font-size: 1.5rem;
-            margin: 15px 0;
         }
-        h2 {
-            font-size: 1.3rem;
-            margin: 15px 0 10px;
-        }
-        h3 {
-            font-size: 1.1rem;
-            margin: 12px 0 8px;
-        }
-        /* Navigation */
-        .tabs {
-            display: flex;
-            overflow-x: auto;
-            background-color: #f5f5f5;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-        .tab {
-            padding: 12px 15px;
-            cursor: pointer;
-            white-space: nowrap;
-            border-bottom: 3px solid transparent;
-            font-weight: bold;
-        }
-        .tab.active {
-            color: #3498db;
-            border-bottom: 3px solid #3498db;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        /* Cards and forms */
         .card-view {
             margin-bottom: 15px;
             border: 1px solid #ddd;
@@ -95,6 +57,16 @@
             border-radius: 4px;
             font-size: 1rem;
             box-sizing: border-box;
+        }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background-color: #3498db;
+            color: white;
+            font-size: 0.8rem;
+            margin-right: 5px;
         }
         input[type="number"] {
             -moz-appearance: textfield;
@@ -160,122 +132,6 @@
         .toggle-form-btn:hover {
             background-color: #8e44ad;
         }
-        .category-tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            background-color: #3498db;
-            color: white;
-            font-size: 0.8rem;
-            margin-right: 5px;
-        }
-        /* Preset locations and templates */
-        .preset-item {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .preset-details {
-            flex-grow: 1;
-        }
-        .preset-actions {
-            display: flex;
-            gap: 5px;
-        }
-        .preset-actions button {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            width: auto;
-        }
-        /* Dashboard charts */
-        .chart-container {
-            width: 100%;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            position: relative;
-            height: 200px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            background-color: white;
-        }
-        .bar {
-            position: absolute;
-            bottom: 30px;
-            width: 30px;
-            background-color: #3498db;
-            border-radius: 4px 4px 0 0;
-            transition: height 0.5s ease;
-        }
-        .bar-label {
-            position: absolute;
-            bottom: 10px;
-            text-align: center;
-            font-size: 10px;
-            width: 30px;
-        }
-        .category-chart {
-            width: 120px;
-            height: 120px;
-            margin: 10px auto;
-            position: relative;
-        }
-        .category-chart-segment {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            clip: rect(0px, 120px, 120px, 60px);
-            transform: rotate(0deg);
-        }
-        .category-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .category-legend-item {
-            display: flex;
-            align-items: center;
-            font-size: 0.8rem;
-            margin-right: 8px;
-        }
-        .category-legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-            margin-right: 4px;
-        }
-        .stats-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: space-between;
-        }
-        .stat-card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            flex: 1 0 calc(50% - 10px);
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #3498db;
-        }
-        .stat-label {
-            font-size: 0.8rem;
-            color: #777;
-        }
-        /* For tablet and desktop */
         @media (min-width: 768px) {
             body {
                 margin: 20px;
@@ -290,509 +146,326 @@
             button {
                 width: auto;
             }
-            .tabs {
-                justify-content: center;
-            }
-            .chart-container {
-                height: 300px;
-            }
-            .category-chart {
-                width: 180px;
-                height: 180px;
-            }
-            .category-chart-segment {
-                width: 180px;
-                height: 180px;
-                clip: rect(0px, 180px, 180px, 90px);
-            }
-            .stat-card {
-                flex: 1 0 calc(25% - 15px);
-            }
         }
     </style>
 </head>
 <body>
     <h1>Work Mileage Tracker</h1>
     
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('dashboard')">Dashboard</div>
-        <div class="tab" onclick="switchTab('trips')">My Trips</div>
-        <div class="tab" onclick="switchTab('locations')">Saved Locations</div>
-        <div class="tab" onclick="switchTab('templates')">Trip Templates</div>
+    <div class="rate-info">
+        <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
     </div>
     
-    <div id="dashboard" class="tab-content active">
-        <div class="summary">
-            <h3>Mileage Summary</h3>
-            <p>Total Business Miles: <span id="dash-totalMiles">0</span></p>
-            <p>Estimated Tax Deduction: $<span id="dash-taxDeduction">0.00</span></p>
+    <button id="toggleFormBtn" class="toggle-form-btn" onclick="toggleTripForm()">Add New Trip</button>
+    
+    <div id="tripForm" class="input-form" style="display:none;">
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date">
         </div>
-        
-        <h3>Monthly Miles</h3>
-        <div class="chart-container" id="monthly-chart">
-            <!-- Bars will be generated here -->
+        <div class="form-group">
+            <label for="startLocation">Starting Location:</label>
+            <input type="text" id="startLocation" placeholder="Home, Office, etc.">
         </div>
-        
-        <h3>Miles by Category</h3>
-        <div class="category-chart" id="category-chart">
-            <!-- Chart segments will be generated here -->
+        <div class="form-group">
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" placeholder="Client site, Meeting, etc.">
         </div>
-        <div class="category-legend" id="category-legend">
-            <!-- Legend items will be generated here -->
+        <div class="form-group">
+            <label for="category">Trip Category:</label>
+            <select id="category" class="form-select">
+                <option value="">-- Select a category --</option>
+                <option value="Client Meetings">Client Meetings</option>
+                <option value="Filming">Filming</option>
+                <option value="Pick Up Equipment">Pick Up Equipment</option>
+                <option value="Drop Off Equipment">Drop Off Equipment</option>
+                <option value="Training">Training</option>
+                <option value="Other">Other</option>
+            </select>
         </div>
-        
-        <h3>Trip Statistics</h3>
-        <div class="stats-box">
-            <div class="stat-card">
-                <div class="stat-value" id="total-trips">0</div>
-                <div class="stat-label">Total Trips</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="avg-miles">0</div>
-                <div class="stat-label">Avg Miles/Trip</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="longest-trip">0</div>
-                <div class="stat-label">Longest Trip</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="most-visited"></div>
-                <div class="stat-label">Most Visited</div>
-            </div>
+        <div class="form-group" id="otherCategoryContainer" style="display:none;">
+            <label for="otherCategory">Specify Other Category:</label>
+            <input type="text" id="otherCategory" placeholder="Enter trip category">
         </div>
-        
-        <div class="buttons">
-            <button onclick="exportToCSV()">Export to CSV</button>
-            <button onclick="switchTab('trips')">Add New Trip</button>
+        <div class="form-group">
+            <label for="purpose">Business Purpose/Notes:</label>
+            <textarea id="purpose" placeholder="Details about this business trip..." rows="2"></textarea>
         </div>
+        <div class="form-group">
+            <label for="startOdometer">Starting Odometer:</label>
+            <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric">
+        </div>
+        <div class="form-group">
+            <label for="endOdometer">Ending Odometer:</label>
+            <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric">
+        </div>
+        <div class="form-group">
+            <label>Miles Driven:</label>
+            <span id="milesDriven">0</span>
+        </div>
+        <button class="add-trip-btn" onclick="addTrip()">Save Trip</button>
     </div>
     
-    <div id="trips" class="tab-content">
-        <div class="rate-info">
-            <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
-        </div>
-        
-        <button id="toggleFormBtn" class="toggle-form-btn" onclick="toggleTripForm()">Add New Trip</button>
-        
-        <div id="tripForm" class="input-form" style="display:none;">
-            <div class="form-group">
-                <label for="date">Date:</label>
-                <input type="date" id="date">
-            </div>
-            <div class="form-group">
-                <label for="startLocation">Starting Location:</label>
-                <input type="text" id="startLocation" placeholder="Home, Office, etc.">
-                <button onclick="showSavedLocations('startLocation')" style="margin-top:5px; background-color:#f39c12; padding:5px 10px; font-size:0.9rem;">Use Saved Location</button>
-            </div>
-            <div class="form-group">
-                <label for="destination">Destination:</label>
-                <input type="text" id="destination" placeholder="Client site, Meeting, etc.">
-                <button onclick="showSavedLocations('destination')" style="margin-top:5px; background-color:#f39c12; padding:5px 10px; font-size:0.9rem;">Use Saved Location</button>
-            </div>
-            <div class="form-group">
-                <label for="category">Trip Category:</label>
-                <select id="category" class="form-select">
-                    <option value="">-- Select a category --</option>
-                    <option value="Client Meetings">Client Meetings</option>
-                    <option value="Filming">Filming</option>
-                    <option value="Pick Up Equipment">Pick Up Equipment</option>
-                    <option value="Drop Off Equipment">Drop Off Equipment</option>
-                    <option value="Training">Training</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            <div class="form-group" id="otherCategoryContainer" style="display:none;">
-                <label for="otherCategory">Specify Other Category:</label>
-                <input type="text" id="otherCategory" placeholder="Enter trip category">
-            </div>
-            <div class="form-group">
-                <label for="purpose">Business Purpose/Notes:</label>
-                <textarea id="purpose" placeholder="Details about this business trip..." rows="2"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="startOdometer">Starting Odometer:</label>
-                <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric">
-            </div>
-            <div class="form-group">
-                <label for="endOdometer">Ending Odometer:</label>
-                <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric">
-            </div>
-            <div class="form-group">
-                <label>Miles Driven:</label>
-                <span id="milesDriven">0</span>
-            </div>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="add-trip-btn" onclick="addTrip()">Save Trip</button>
-                <button style="background-color:#f39c12" onclick="saveAsTemplate()">Save as Template</button>
-            </div>
-        </div>
-        
-        <div id="savedLocationsModal" class="input-form" style="display:none; position:relative;">
-            <h3>Select a Saved Location</h3>
-            <div id="savedLocationsList"></div>
-            <button onclick="closeSavedLocationsModal()" style="background-color:#e74c3c; margin-top:10px;">Cancel</button>
-        </div>
-        
-        <div id="tripTemplatesModal" class="input-form" style="display:none; position:relative;">
-            <h3>Select a Trip Template</h3>
-            <div id="tripTemplatesList"></div>
-            <button onclick="closeTripTemplatesModal()" style="background-color:#e74c3c; margin-top:10px;">Cancel</button>
-        </div>
-        
-        <div id="tripsList"></div>
-        
-        <div class="summary">
-            <h3>Summary</h3>
-            <p>Total Business Miles: <span id="totalMiles">0</span></p>
-            <p>Estimated Tax Deduction: $<span id="taxDeduction">0.00</span> (based on current year rate)</p>
-        </div>
-        
-        <div class="buttons">
-            <button onclick="exportToCSV()">Export to CSV</button>
-            <button onclick="showTripTemplatesModal()">Use Template</button>
-            <button onclick="clearAll()" style="background-color:#e74c3c">Clear All</button>
-        </div>
+    <div id="tripsList"></div>
+    
+    <div class="summary">
+        <h3>Summary</h3>
+        <p>Total Business Miles: <span id="totalMiles">0</span></p>
+        <p>Estimated Tax Deduction: $<span id="taxDeduction">0.00</span> (based on current year rate)</p>
     </div>
     
-    <div id="locations" class="tab-content">
-        <h2>Saved Locations</h2>
-        <p>Save your frequently visited locations for quick entry.</p>
-        
-        <div class="input-form">
-            <div class="form-group">
-                <label for="locationName">Location Name:</label>
-                <input type="text" id="locationName" placeholder="Office, Client A, etc.">
-            </div>
-            <div class="form-group">
-                <label for="locationAddress">Address:</label>
-                <input type="text" id="locationAddress" placeholder="Full address or description">
-            </div>
-            <button class="add-trip-btn" onclick="saveLocation()">Save Location</button>
-        </div>
-        
-        <div id="locationsList"></div>
-    </div>
-    
-    <div id="templates" class="tab-content">
-        <h2>Trip Templates</h2>
-        <p>Save common trips as templates for quick entry.</p>
-        
-        <div id="templatesList"></div>
+    <div class="buttons">
+        <button onclick="exportToCSV()">Export to CSV</button>
+        <button onclick="clearAll()">Clear All</button>
     </div>
 
-    <script>
-    // Global variables
-    let currentLocationField = '';
-    const categoryColors = {
-        'Client Meetings': '#3498db',
-        'Filming': '#9b59b6',
-        'Pick Up Equipment': '#f39c12',
-        'Drop Off Equipment': '#e67e22',
-        'Training': '#2ecc71',
-        'Other': '#95a5a6',
-        'Uncategorized': '#bdc3c7'
-    };
+<script>
+// Load saved data from localStorage if available
+document.addEventListener('DOMContentLoaded', function() {
+    loadSavedData();
+    renderTripsList();
+    updateSummary();
     
-    // Load saved data from localStorage if available
-    document.addEventListener('DOMContentLoaded', function() {
-        loadSavedData();
-        renderTripsList();
-        renderLocationsList();
-        renderTemplatesList();
-        updateSummary();
-        updateDashboard();
-        
-        // Add event listeners for automatic miles calculation
-        document.getElementById('startOdometer').addEventListener('input', calculateMiles);
-        document.getElementById('endOdometer').addEventListener('input', calculateMiles);
-        
-        // Show "Other" category input when "Other" is selected
-        document.getElementById('category').addEventListener('change', function() {
-            const otherContainer = document.getElementById('otherCategoryContainer');
-            if (this.value === 'Other') {
-                otherContainer.style.display = 'block';
-            } else {
-                otherContainer.style.display = 'none';
-            }
-        });
+    // Add event listeners for automatic miles calculation
+    document.getElementById('startOdometer').addEventListener('input', calculateMiles);
+    document.getElementById('endOdometer').addEventListener('input', calculateMiles);
+    
+    // Show "Other" category input when "Other" is selected
+    document.getElementById('category').addEventListener('change', function() {
+        const otherContainer = document.getElementById('otherCategoryContainer');
+        if (this.value === 'Other') {
+            otherContainer.style.display = 'block';
+        } else {
+            otherContainer.style.display = 'none';
+        }
+    });
+});
+
+function toggleTripForm() {
+    const form = document.getElementById('tripForm');
+    const btn = document.getElementById('toggleFormBtn');
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        btn.textContent = 'Hide Form';
+    } else {
+        form.style.display = 'none';
+        btn.textContent = 'Add New Trip';
+    }
+}
+
+function calculateMiles() {
+    const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
+    const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
+    const miles = Math.max(0, endOdo - startOdo);
+    document.getElementById('milesDriven').textContent = miles.toFixed(1);
+}
+
+function addTrip() {
+    const date = document.getElementById('date').value;
+    const startLocation = document.getElementById('startLocation').value;
+    const destination = document.getElementById('destination').value;
+    const categorySelect = document.getElementById('category');
+    const category = categorySelect.value === 'Other' ? 
+                     document.getElementById('otherCategory').value : 
+                     categorySelect.value;
+    const purpose = document.getElementById('purpose').value;
+    const startOdo = document.getElementById('startOdometer').value;
+    const endOdo = document.getElementById('endOdometer').value;
+    
+    if (!date || !startLocation || !destination || !category || !startOdo || !endOdo) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
+    
+    if (miles <= 0) {
+        alert('Ending odometer reading must be greater than starting reading');
+        return;
+    }
+    
+    // Get existing data or initialize new array
+    let trips = [];
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        trips = JSON.parse(savedData);
+    }
+    
+    // Add new trip to array
+    trips.push({
+        date: date,
+        startLocation: startLocation,
+        destination: destination,
+        category: category,
+        purpose: purpose,
+        startOdo: startOdo,
+        endOdo: endOdo,
+        miles: miles,
+        id: Date.now() // Unique ID for easier deletion
     });
     
-    function switchTab(tabId) {
-        // Hide all tab contents
-        const tabContents = document.querySelectorAll('.tab-content');
-        tabContents.forEach(content => {
-            content.classList.remove('active');
-        });
-        
-        // Deactivate all tabs
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            tab.classList.remove('active');
-        });
-        
-        // Show selected tab content and activate tab
-        document.getElementById(tabId).classList.add('active');
-        document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
-        
-        // If switching to dashboard, update it
-        if (tabId === 'dashboard') {
-            updateDashboard();
-        }
-    }
+    // Save updated data
+    localStorage.setItem('mileageData', JSON.stringify(trips));
     
-    function toggleTripForm() {
-        const form = document.getElementById('tripForm');
-        const btn = document.getElementById('toggleFormBtn');
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-            btn.textContent = 'Hide Form';
-        } else {
-            form.style.display = 'none';
-            btn.textContent = 'Add New Trip';
-        }
-    }
+    // Clear input fields
+    document.getElementById('date').value = '';
+    document.getElementById('startLocation').value = '';
+    document.getElementById('destination').value = '';
+    document.getElementById('category').value = '';
+    document.getElementById('otherCategory').value = '';
+    document.getElementById('otherCategoryContainer').style.display = 'none';
+    document.getElementById('purpose').value = '';
+    document.getElementById('startOdometer').value = '';
+    document.getElementById('endOdometer').value = '';
+    document.getElementById('milesDriven').textContent = '0';
     
-    function calculateMiles() {
-        const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
-        const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
-        const miles = Math.max(0, endOdo - startOdo);
-        document.getElementById('milesDriven').textContent = miles.toFixed(1);
-    }
-    
-    function addTrip() {
-        const date = document.getElementById('date').value;
-        const startLocation = document.getElementById('startLocation').value;
-        const destination = document.getElementById('destination').value;
-        const categorySelect = document.getElementById('category');
-        const category = categorySelect.value === 'Other' ? 
-                       document.getElementById('otherCategory').value : 
-                       categorySelect.value;
-        const purpose = document.getElementById('purpose').value;
-        const startOdo = document.getElementById('startOdometer').value;
-        const endOdo = document.getElementById('endOdometer').value;
-        
-        if (!date || !startLocation || !destination || !category || !startOdo || !endOdo) {
-            alert('Please fill in all required fields');
-            return;
-        }
-        
-        const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
-        
-        if (miles <= 0) {
-            alert('Ending odometer reading must be greater than starting reading');
-            return;
-        }
-        
-        // Get existing data or initialize new array
-        let trips = [];
+    // Hide form and update display
+    toggleTripForm();
+    renderTripsList();
+    updateSummary();
+}
+
+function deleteTrip(tripId) {
+    if (confirm('Are you sure you want to delete this trip?')) {
+        // Get current data
         const savedData = localStorage.getItem('mileageData');
         if (savedData) {
-            trips = JSON.parse(savedData);
-        }
-        
-        // Add new trip to array
-        trips.push({
-            date: date,
-            startLocation: startLocation,
-            destination: destination,
-            category: category,
-            purpose: purpose,
-            startOdo: startOdo,
-            endOdo: endOdo,
-            miles: miles,
-            id: Date.now() // Unique ID for easier deletion
-        });
-        
-        // Save updated data
-        localStorage.setItem('mileageData', JSON.stringify(trips));
-        
-        // Clear input fields
-        document.getElementById('date').value = '';
-        document.getElementById('startLocation').value = '';
-        document.getElementById('destination').value = '';
-        document.getElementById('category').value = '';
-        document.getElementById('otherCategory').value = '';
-        document.getElementById('otherCategoryContainer').style.display = 'none';
-        document.getElementById('purpose').value = '';
-        document.getElementById('startOdometer').value = '';
-        document.getElementById('endOdometer').value = '';
-        document.getElementById('milesDriven').textContent = '0';
-        
-        // Hide form and update display
-        toggleTripForm();
-        renderTripsList();
-        updateSummary();
-        updateDashboard();
-    }
-    
-    function deleteTrip(tripId) {
-        if (confirm('Are you sure you want to delete this trip?')) {
-            // Get current data
-            const savedData = localStorage.getItem('mileageData');
-            if (savedData) {
-                let trips = JSON.parse(savedData);
-                // Filter out the trip to delete
-                trips = trips.filter(trip => trip.id !== tripId);
-                // Save updated data
-                localStorage.setItem('mileageData', JSON.stringify(trips));
-                // Refresh display
-                renderTripsList();
-                updateSummary();
-                updateDashboard();
-            }
-        }
-    }
-    
-    function renderTripsList() {
-        const tripsList = document.getElementById('tripsList');
-        tripsList.innerHTML = '';
-        
-        const savedData = localStorage.getItem('mileageData');
-        if (savedData) {
-            const trips = JSON.parse(savedData);
-            
-            if (trips.length === 0) {
-                tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
-                return;
-            }
-            
-            // Sort trips by date (newest first)
-            trips.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            for (const trip of trips) {
-                const tripCard = document.createElement('div');
-                tripCard.className = 'card-view';
-                
-                // Format date for better display
-                const tripDate = new Date(trip.date);
-                const formattedDate = tripDate.toLocaleDateString();
-                
-                // Get category color or default
-                const categoryColor = categoryColors[trip.category] || categoryColors['Uncategorized'];
-                
-                tripCard.innerHTML = `
-                    <div><span class="category-tag" style="background-color: ${categoryColor}">${trip.category || 'Uncategorized'}</span></div>
-                    <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
-                    <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
-                    <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
-                    ${trip.purpose ? `<div><span class="label">Notes:</span> <span class="value">${trip.purpose}</span></div>` : ''}
-                    <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
-                    <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
-                `;
-                
-                tripsList.appendChild(tripCard);
-            }
-        } else {
-            tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
-        }
-    }
-    
-    function updateSummary() {
-        let totalMiles = 0;
-        
-        const savedData = localStorage.getItem('mileageData');
-        if (savedData) {
-            const trips = JSON.parse(savedData);
-            totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
-        }
-        
-        document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
-        document.getElementById('dash-totalMiles').textContent = totalMiles.toFixed(1);
-        
-        // Calculate tax deduction (using 2024 rate of 67 cents per mile)
-        const taxDeduction = totalMiles * 0.67;
-        document.getElementById('taxDeduction').textContent = taxDeduction.toFixed(2);
-        document.getElementById('dash-taxDeduction').textContent = taxDeduction.toFixed(2);
-    }
-    
-    function exportToCSV() {
-        const savedData = localStorage.getItem('mileageData');
-        if (!savedData || JSON.parse(savedData).length === 0) {
-            alert('No data to export');
-            return;
-        }
-        
-        const trips = JSON.parse(savedData);
-        let csv = 'Date,Starting Location,Destination,Category,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
-        
-        for (const trip of trips) {
-            const rowData = [
-                trip.date,
-                '"' + trip.startLocation + '"',
-                '"' + trip.destination + '"',
-                '"' + (trip.category || 'Uncategorized') + '"',
-                '"' + (trip.purpose || '') + '"',
-                trip.startOdo,
-                trip.endOdo,
-                trip.miles
-            ];
-            csv += rowData.join(',') + '\n';
-        }
-        
-        const totalMiles = document.getElementById('totalMiles').textContent;
-        const taxDeduction = document.getElementById('taxDeduction').textContent;
-        csv += '\nTotal Miles,' + totalMiles + '\nEstimated Tax Deduction,$' + taxDeduction;
-        
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', 'mileage_tracker_' + new Date().toISOString().split('T')[0] + '.csv');
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-    
-    function clearAll() {
-        if (confirm('Are you sure you want to clear all trip data? This cannot be undone.')) {
-            localStorage.removeItem('mileageData');
+            let trips = JSON.parse(savedData);
+            // Filter out the trip to delete
+            trips = trips.filter(trip => trip.id !== tripId);
+            // Save updated data
+            localStorage.setItem('mileageData', JSON.stringify(trips));
+            // Refresh display
             renderTripsList();
             updateSummary();
-            updateDashboard();
         }
     }
+}
+
+function renderTripsList() {
+    const tripsList = document.getElementById('tripsList');
+    tripsList.innerHTML = '';
     
-    function loadSavedData() {
-        // Just load the data, rendering happens separately
-        const savedData = localStorage.getItem('mileageData');
-        if (savedData) {
-            // Add IDs to older entries if they don't have them
-            const trips = JSON.parse(savedData);
-            let needsUpdate = false;
-            
-            for (let i = 0; i < trips.length; i++) {
-                if (!trips[i].id) {
-                    trips[i].id = Date.now() + i;
-                    needsUpdate = true;
-                }
-            }
-            
-            if (needsUpdate) {
-                localStorage.setItem('mileageData', JSON.stringify(trips));
-            }
-        }
-    }
-    
-    // Dashboard functions
-    function updateDashboard() {
-        const savedData = localStorage.getItem('mileageData');
-        if (!savedData || JSON.parse(savedData).length === 0) {
-            // If no data, clear charts
-            document.getElementById('monthly-chart').innerHTML = '<p style="text-align:center;padding:20px;color:#777;">No trip data available</p>';
-            document.getElementById('category-chart').innerHTML = '';
-            document.getElementById('category-legend').innerHTML = '';
-            document.getElementById('total-trips').textContent = '0';
-            document.getElementById('avg-miles').textContent = '0';
-            document.getElementById('longest-trip').textContent = '0';
-            document.getElementById('most-visited').textContent = '-';
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        const trips = JSON.parse(savedData);
+        
+        if (trips.length === 0) {
+            tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
             return;
         }
         
+        // Sort trips by date (newest first)
+        trips.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        for (const trip of trips) {
+            const tripCard = document.createElement('div');
+            tripCard.className = 'card-view';
+            
+            // Format date for better display
+            const tripDate = new Date(trip.date);
+            const formattedDate = tripDate.toLocaleDateString();
+            
+            tripCard.innerHTML = `
+                <div><span class="category-tag">${trip.category || 'Uncategorized'}</span></div>
+                <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
+                <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
+                <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
+                ${trip.purpose ? `<div><span class="label">Notes:</span> <span class="value">${trip.purpose}</span></div>` : ''}
+                <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
+                <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
+            `;
+            
+            tripsList.appendChild(tripCard);
+        }
+    } else {
+        tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
+    }
+}
+
+function updateSummary() {
+    let totalMiles = 0;
+    
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
         const trips = JSON.parse(savedData);
+        totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
+    }
+    
+    document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
+    
+    // Calculate tax deduction (using 2024 rate of 67 cents per mile)
+    const taxDeduction = totalMiles * 0.67;
+    document.getElementById('taxDeduction').textContent = taxDeduction.toFixed(2);
+}
+
+function exportToCSV() {
+    const savedData = localStorage.getItem('mileageData');
+    if (!savedData || JSON.parse(savedData).length === 0) {
+        alert('No data to export');
+        return;
+    }
+    
+    const trips = JSON.parse(savedData);
+    let csv = 'Date,Starting Location,Destination,Category,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
+    
+    for (const trip of trips) {
+        const rowData = [
+            trip.date,
+            '"' + trip.startLocation + '"',
+            '"' + trip.destination + '"',
+            '"' + (trip.category || 'Uncategorized') + '"',
+            '"' + (trip.purpose || '') + '"',
+            trip.startOdo,
+            trip.endOdo,
+            trip.miles
+        ];
+        csv += rowData.join(',') + '\n';
+    }
+    
+    const totalMiles = document.getElementById('totalMiles').textContent;
+    const taxDeduction = document.getElementById('taxDeduction').textContent;
+    csv += '\nTotal Miles,' + totalMiles + '\nEstimated Tax Deduction,$' + taxDeduction;
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'mileage_tracker_' + new Date().toISOString().split('T')[0] + '.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function clearAll() {
+    if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+        localStorage.removeItem('mileageData');
+        renderTripsList();
+        updateSummary();
+    }
+}
+
+function loadSavedData() {
+    // Just load the data, rendering happens separately
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        // Add IDs to older entries if they don't have them
+        const trips = JSON.parse(savedData);
+        let needsUpdate = false;
         
-        // Update trip statistics
-        document.getElementById('total-trips').textContent = trips.length;
+        for (let i = 0; i < trips.length; i++) {
+            if (!trips[i].id) {
+                trips[i].id = Date.now() + i;
+                needsUpdate = true;
+            }
+        }
         
-        const totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
-        const avgMiles = totalMiles / trips.
+        if (needsUpdate) {
+            localStorage.setItem('mileageData', JSON.stringify(trips));
+        }
+    }
+}
+</script>
+</body>
+</html>
