@@ -1,320 +1,576 @@
-.location-input-container {
-            position: relative;
-            width: 100%;
-        }
-        .location-input-container input {
-            width: 100%;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work Mileage Tracker</title>
     <style>
+        :root {
+            --primary: #3a86ff;
+            --primary-dark: #2667cc;
+            --secondary: #38b000;
+            --secondary-dark: #2a8c00;
+            --danger: #ef476f;
+            --danger-dark: #d13963;
+            --neutral: #6c757d;
+            --neutral-dark: #5a6268;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --border-radius-sm: 6px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 10px;
+            font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 16px;
             max-width: 100%;
             overflow-x: hidden;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
         }
-        h1 {
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
             text-align: center;
-            color: #2c3e50;
-            font-size: 1.5rem;
+            margin-bottom: var(--spacing-lg);
         }
-        .card-view {
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            background-color: #f9f9f9;
+
+        h1 {
+            color: var(--dark);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
         }
-        .card-view div {
-            margin-bottom: 5px;
+
+        h3 {
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: var(--spacing-md);
+            color: var(--dark);
         }
-        .card-view .label {
-            font-weight: bold;
-            color: #555;
-            font-size: 0.9rem;
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
         }
-        .card-view .value {
-            margin-left: 5px;
+
+        .info-card {
+            background-color: rgba(58, 134, 255, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
         }
-        .input-form {
-            background-color: #f2f2f2;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
+
         .form-group {
-            margin-bottom: 10px;
+            margin-bottom: var(--spacing-lg);
         }
+
         .form-group label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 3px;
-            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: var(--spacing-sm);
+            color: var(--dark);
         }
-        .form-group input, .form-group select {
+
+        .form-group input,
+        .form-group select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 12px;
+            border: 1px solid #dce1e8;
+            border-radius: var(--border-radius-sm);
             font-size: 1rem;
             box-sizing: border-box;
+            background-color: var(--light);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.25);
+            outline: none;
+        }
+
         input[type="number"] {
             -moz-appearance: textfield;
         }
+
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        .summary {
-            margin-top: 20px;
-            background-color: #e8f7ef;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .buttons {
-            margin-top: 15px;
+
+        .btn {
+            display: inline-block;
+            font-weight: 500;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        button {
-            padding: 12px 16px;
-            background-color: #3498db;
-            color: white;
+            padding: 12px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius-sm);
             cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
             font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+        }
+
+        .btn-neutral {
+            background-color: var(--neutral);
+            color: white;
+        }
+
+        .btn-neutral:hover {
+            background-color: var(--neutral-dark);
+        }
+
+        .btn-block {
+            display: block;
             width: 100%;
         }
-        button:hover {
-            background-color: #2980b9;
-        }
-        button.delete-btn {
-            background-color: #e74c3c;
-            padding: 8px;
-            font-size: 0.9rem;
-        }
-        button.delete-btn:hover {
-            background-color: #c0392b;
-        }
-        button.edit-btn {
-            background-color: #f39c12;
-            padding: 8px;
-            font-size: 0.9rem;
-            margin-right: 5px;
-        }
-        button.edit-btn:hover {
-            background-color: #d35400;
-        }
-        .card-buttons {
+
+        .btn-group {
             display: flex;
-            margin-top: 8px;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
         }
-        .add-trip-btn {
-            background-color: #2ecc71;
-            margin-top: 10px;
+
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .add-trip-btn:hover {
-            background-color: #27ae60;
+
+        .btn-icon svg {
+            width: 16px;
+            height: 16px;
         }
-        .rate-info {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #e8f4f8;
-            border-left: 4px solid #3498db;
-            font-size: 0.9rem;
+
+        .location-input-container {
+            position: relative;
+            width: 100%;
         }
-        .toggle-form-btn {
-            background-color: #9b59b6;
-            margin-bottom: 10px;
-        }
-        .toggle-form-btn:hover {
-            background-color: #8e44ad;
-        }
-        .dialog-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+
+        .trip-card {
             background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            z-index: 1000;
-            width: 90%;
-            max-width: 400px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: var(--spacing-md);
+            overflow: hidden;
+            transition: transform 0.2s;
         }
+
+        .trip-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .trip-header {
+            padding: var(--spacing-md);
+            background-color: rgba(58, 134, 255, 0.1);
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .trip-date {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .trip-miles {
+            font-weight: 600;
+            color: var(--primary);
+            background-color: rgba(58, 134, 255, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .trip-body {
+            padding: var(--spacing-md);
+        }
+
+        .trip-detail {
+            display: flex;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .trip-label {
+            font-weight: 500;
+            color: var(--neutral);
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .trip-value {
+            flex-grow: 1;
+        }
+
+        .trip-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background-color: var(--light);
+        }
+
+        .summary-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .summary-header {
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.1rem;
+        }
+
+        .summary-item.total {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.2rem;
+            padding-top: var(--spacing-sm);
+            border-top: 1px solid #e9ecef;
+        }
+
         .dialog-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
-        }
-        .dialog-box .buttons {
-            flex-direction: row;
-            margin-top: 20px;
-        }
-        .dialog-box button {
-            flex: 1;
-        }
-        .category-options {
-            margin-bottom: 15px;
-        }
-        .category-options .form-group {
-            margin-bottom: 8px;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
-        .category-options input[type="radio"] {
-            width: auto;
-            margin-right: 10px;
+
+        .dialog-box {
+            background-color: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
         }
-        .category-options label {
-            display: inline;
-            font-weight: normal;
+
+        .trip-options {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
         }
-        .dialog-box h3 {
-            margin-top: 0;
-            color: #2c3e50;
+
+        .trip-option {
+            flex: 1;
+            min-width: 150px;
         }
+
         @media (min-width: 768px) {
             body {
-                margin: 20px;
+                padding: 32px;
             }
-            h1 {
-                font-size: 2rem;
-            }
-            .buttons {
+
+            .btn-group {
                 flex-direction: row;
-                justify-content: center;
             }
-            button {
+
+            .btn-block {
                 width: auto;
+            }
+        }
+
+        /* Empty state styles */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-lg);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            color: var(--neutral);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .empty-state-text {
+            color: var(--neutral);
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* Form field validation */
+        .form-group.error input,
+        .form-group.error select {
+            border-color: var(--danger);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        /* Responsive grid for larger screens */
+        @media (min-width: 992px) {
+            .form-row {
+                display: flex;
+                gap: var(--spacing-md);
+            }
+
+            .form-col {
+                flex: 1;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Work Mileage Tracker</h1>
-    
-    <div class="rate-info">
-        <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
-    </div>
-    
-    <button id="toggleFormBtn" class="toggle-form-btn" onclick="toggleFormOptions()">Add New Trip</button>
-    
-    <div id="formOptions" style="display:none; margin-bottom: 15px; text-align: center;">
-        <button onclick="openNewForm(true)" style="background-color: #2ecc71; margin-right: 10px;">Continue Last Trip</button>
-        <button onclick="openNewForm(false)" style="background-color: #3498db;">Start Blank Form</button>
-    </div>
-    
-    <div id="tripForm" class="input-form" style="display:none;">
-        <h3 id="formTitle">Add New Trip</h3>
-        <input type="hidden" id="editTripId" value="">
-        <div class="form-group">
-            <label for="date">Date:</label>
-            <input type="date" id="date">
+    <div class="container">
+        <div class="header">
+            <h1>Work Mileage Tracker</h1>
         </div>
-        <div class="form-group">
-            <label for="startLocation">Starting Location:</label>
-            <div class="location-input-container">
-                <input type="text" id="startLocation" placeholder="Home, Office, etc." list="startLocations">
-                <datalist id="startLocations">
-                    <option value="West Cave Loop Dripping Springs">
-                </datalist>
+        
+        <div class="info-card">
+            <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
+        </div>
+        
+        <button id="toggleFormBtn" class="btn btn-primary btn-block btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New Trip
+        </button>
+        
+        <div id="formOptions" style="display:none; margin: var(--spacing-md) 0;">
+            <div class="trip-options">
+                <div class="trip-option">
+                    <button onclick="openNewForm(true)" class="btn btn-secondary btn-block btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="17 1 21 5 17 9"></polyline>
+                            <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                            <polyline points="7 23 3 19 7 15"></polyline>
+                            <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                        </svg>
+                        Continue Last Trip
+                    </button>
+                </div>
+                <div class="trip-option">
+                    <button onclick="openNewForm(false)" class="btn btn-primary btn-block btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Start New Trip
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label for="destination">Destination:</label>
-            <div class="location-input-container">
-                <input type="text" id="destination" placeholder="Client site, Meeting, etc." list="destinations">
-                <datalist id="destinations">
-                    <option value="West Cave Loop Dripping Springs">
-                </datalist>
+        
+        <div id="tripForm" class="card" style="display:none;">
+            <h3 id="formTitle">Add New Trip</h3>
+            <input type="hidden" id="editTripId" value="">
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date">
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="workStatus">Work Status:</label>
+                        <select id="workStatus">
+                            <option value="">-- Select Status --</option>
+                            <option value="Start Work">Start Work</option>
+                            <option value="Work">Work</option>
+                            <option value="Start Work Finish">Start Work Finish</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="startLocation">Starting Location:</label>
+                <div class="location-input-container">
+                    <input type="text" id="startLocation" placeholder="Home, Office, etc." list="startLocations">
+                    <datalist id="startLocations">
+                        <option value="West Cave Loop Dripping Springs">
+                    </datalist>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="destination">Destination:</label>
+                <div class="location-input-container">
+                    <input type="text" id="destination" placeholder="Client site, Meeting, etc." list="destinations">
+                    <datalist id="destinations">
+                        <option value="West Cave Loop Dripping Springs">
+                    </datalist>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="purposeCategory">Business Purpose Category:</label>
+                <select id="purposeCategory" onchange="handleCategoryChange()">
+                    <option value="">-- Select a Category --</option>
+                    <option value="Client Meetings">Client Meetings</option>
+                    <option value="Client Lunch">Client Lunch</option>
+                    <option value="Filming">Filming</option>
+                    <option value="Equipment Pick Up/Drop Off">Equipment Pick Up/Drop Off</option>
+                    <option value="On Site with Client">On Site with Client</option>
+                    <option value="Client MISC">Client MISC</option>
+                    <option value="Returning Home">Returning Home</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="purposeDetailContainer" style="display:none;">
+                <label for="purposeDetail">Business Purpose Details (optional):</label>
+                <input type="text" id="purposeDetail" placeholder="Enter specific details (optional)">
+            </div>
+            
+            <div class="form-group" id="otherCategoryContainer" style="display:none;">
+                <label for="otherCategoryInput">Specify Other Category:</label>
+                <input type="text" id="otherCategoryInput" placeholder="Enter custom category">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="startOdometer">Starting Odometer:</label>
+                        <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric" onchange="calculateMiles()">
+                    </div>
+                </div>
+                <div class="form-col">
+                    <div class="form-group">
+                        <label for="endOdometer">Ending Odometer:</label>
+                        <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric" onchange="calculateMiles()">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group" id="tripDistanceContainer">
+                <label for="tripDistance">Trip Distance (miles):</label>
+                <input type="number" id="tripDistance" placeholder="Enter expected miles" inputmode="numeric" onchange="calculateEndOdometer()">
+            </div>
+            
+            <div class="form-group">
+                <label>Miles Driven:</label>
+                <div class="trip-miles" id="milesDriven">0</div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="saveButton" onclick="saveTrip()">
+                    <span class="btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save Trip
+                    </span>
+                </button>
+                <button class="btn btn-neutral" onclick="cancelEdit()">Cancel</button>
             </div>
         </div>
-        <div class="form-group">
-            <label for="purpose">Business Purpose Category:</label>
-            <select id="purposeCategory" onchange="handleCategoryChange()">
-                <option value="">-- Select a Category --</option>
-                <option value="Client Meetings">Client Meetings</option>
-                <option value="Client Lunch">Client Lunch</option>
-                <option value="Filming">Filming</option>
-                <option value="Equipment Pick Up/Drop Off">Equipment Pick Up/Drop Off</option>
-                <option value="On Site with Client">On Site with Client</option>
-                <option value="Client MISC">Client MISC</option>
-                <option value="Returning Home">Returning Home</option>
-                <option value="Other">Other</option>
-            </select>
+        
+        <div id="tripsList"></div>
+        
+        <div class="summary-card">
+            <div class="summary-header">
+                <h3>Summary</h3>
+            </div>
+            <div class="summary-item">
+                <span>Total Business Miles:</span>
+                <span id="totalMiles">0</span>
+            </div>
+            <div class="summary-item total">
+                <span>Estimated Tax Deduction:</span>
+                <span>$<span id="taxDeduction">0.00</span></span>
+            </div>
         </div>
-        <div class="form-group" id="purposeDetailContainer" style="display:none;">
-            <label for="purposeDetail">Business Purpose Details (optional):</label>
-            <input type="text" id="purposeDetail" placeholder="Enter specific details (optional)">
-        </div>
-        <div class="form-group">
-            <label for="workStatus">Work Status:</label>
-            <select id="workStatus">
-                <option value="">-- Select Status --</option>
-                <option value="Start Work">Start Work</option>
-                <option value="Work">Work</option>
-                <option value="Start Work Finish">Start Work Finish</option>
-            </select>
-        </div>
-        <div class="form-group" id="otherCategoryContainer" style="display:none;">
-            <label for="otherCategoryInput">Specify Other Category:</label>
-            <input type="text" id="otherCategoryInput" placeholder="Enter custom category">
-        </div>
-        <div class="form-group">
-            <label for="startOdometer">Starting Odometer:</label>
-            <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric" onchange="calculateMiles()">
-        </div>
-        <div class="form-group" id="tripDistanceContainer">
-            <label for="tripDistance">Trip Distance (miles):</label>
-            <input type="number" id="tripDistance" placeholder="Enter expected miles" inputmode="numeric" onchange="calculateEndOdometer()">
-        </div>
-        <div class="form-group">
-            <label for="endOdometer">Ending Odometer:</label>
-            <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric" onchange="calculateMiles()">
-        </div>
-        <div class="form-group">
-            <label>Miles Driven:</label>
-            <span id="milesDriven">0</span>
-        </div>
-        <div class="buttons">
-            <button class="add-trip-btn" id="saveButton" onclick="saveTrip()">Save Trip</button>
-            <button class="cancel-btn" onclick="cancelEdit()" style="background-color: #7f8c8d;">Cancel</button>
+        
+        <div class="btn-group">
+            <button class="btn btn-primary btn-icon" onclick="exportToCSV()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export to CSV
+            </button>
+            <button class="btn btn-danger btn-icon" onclick="clearAll()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Clear All
+            </button>
         </div>
     </div>
-    
-    <div id="tripsList"></div>
-    
-    <div class="summary">
-        <h3>Summary</h3>
-        <p>Total Business Miles: <span id="totalMiles">0</span></p>
-        <p>Estimated Tax Deduction: $<span id="taxDeduction">0.00</span> (based on current year rate)</p>
-    </div>
-    
-    <div class="buttons">
-        <button onclick="exportToCSV()">Export to CSV</button>
-        <button onclick="clearAll()">Clear All</button>
-    </div>
-
-
-
-
 
 <script>
 // Load saved data from localStorage if available
@@ -323,18 +579,21 @@ document.addEventListener('DOMContentLoaded', function() {
     renderTripsList();
     updateSummary();
     
+    // Set today's date by default for new trips
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = today;
+    
     // Add event listeners for automatic miles calculation
     document.getElementById('startOdometer').addEventListener('input', calculateMiles);
     document.getElementById('endOdometer').addEventListener('input', calculateMiles);
     
     // Close dialogs if user clicks outside
     document.addEventListener('click', function(event) {
-        const odometerDialog = document.getElementById('odometerDialog');
-        const categoryDialog = document.getElementById('categoryDialog');
-        
         if (event.target.classList.contains('dialog-overlay')) {
-            odometerDialog.style.display = 'none';
-            categoryDialog.style.display = 'none';
+            const dialogs = document.querySelectorAll('.dialog-overlay');
+            dialogs.forEach(dialog => {
+                dialog.style.display = 'none';
+            });
         }
     });
 });
@@ -346,11 +605,23 @@ function toggleFormOptions() {
     
     if (formOptions.style.display === 'none') {
         formOptions.style.display = 'block';
-        btn.textContent = 'Cancel';
+        btn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Cancel
+        `;
         form.style.display = 'none'; // Make sure form is hidden
     } else {
         formOptions.style.display = 'none';
-        btn.textContent = 'Add New Trip';
+        btn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New Trip
+        `;
         form.style.display = 'none'; // Make sure form is hidden
     }
 }
@@ -359,7 +630,13 @@ function openNewForm(continueLast) {
     // Hide options and show form
     document.getElementById('formOptions').style.display = 'none';
     document.getElementById('tripForm').style.display = 'block';
-    document.getElementById('toggleFormBtn').textContent = 'Hide Form';
+    document.getElementById('toggleFormBtn').innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        Hide Form
+    `;
     
     // Clear the form first
     clearForm();
@@ -375,7 +652,7 @@ function openNewForm(continueLast) {
 
 function clearForm() {
     // Clear all form inputs
-    document.getElementById('date').value = '';
+    document.getElementById('date').valueAsDate = new Date(); // Set to today by default
     document.getElementById('startLocation').value = '';
     document.getElementById('destination').value = '';
     document.getElementById('purposeCategory').value = '';
@@ -388,21 +665,14 @@ function clearForm() {
     document.getElementById('endOdometer').value = '';
     document.getElementById('tripDistance').value = '';
     document.getElementById('milesDriven').textContent = '0';
-}
-
-function toggleTripForm() {
-    const form = document.getElementById('tripForm');
-    const btn = document.getElementById('toggleFormBtn');
-    const formOptions = document.getElementById('formOptions');
     
-    if (form.style.display === 'none') {
-        // Instead of showing the form directly, show the options
-        toggleFormOptions();
-    } else {
-        form.style.display = 'none';
-        formOptions.style.display = 'none';
-        btn.textContent = 'Add New Trip';
-    }
+    // Clear any error states
+    const errorFields = document.querySelectorAll('.form-group.error');
+    errorFields.forEach(field => {
+        field.classList.remove('error');
+        const errorMsg = field.querySelector('.error-message');
+        if (errorMsg) errorMsg.remove();
+    });
 }
 
 function loadLastTripData() {
@@ -478,17 +748,15 @@ function calculateMiles() {
     document.getElementById('milesDriven').textContent = miles.toFixed(1);
 }
 
-function showOdometerDialog() {
+function calculateEndOdometer() {
     const startOdo = parseFloat(document.getElementById('startOdometer').value);
-    if (!isNaN(startOdo)) {
-        document.getElementById('odometerDialog').style.display = 'block';
-        document.getElementById('tripDistance').focus();
+    const tripDistance = parseFloat(document.getElementById('tripDistance').value);
+    
+    if (!isNaN(startOdo) && !isNaN(tripDistance) && tripDistance > 0) {
+        const endOdo = startOdo + tripDistance;
+        document.getElementById('endOdometer').value = endOdo.toFixed(1);
+        calculateMiles();
     }
-}
-
-function closeOdometerDialog() {
-    document.getElementById('odometerDialog').style.display = 'none';
-    document.getElementById('tripDistance').value = '';
 }
 
 function handleCategoryChange() {
@@ -501,441 +769,4 @@ function handleCategoryChange() {
         detailsContainer.style.display = 'block';
         
         // Only show the "Other" input if "Other" is selected
-        if (categorySelect.value === 'Other') {
-            otherContainer.style.display = 'block';
-            document.getElementById('otherCategoryInput').focus();
-        } else {
-            otherContainer.style.display = 'none';
-            document.getElementById('purposeDetail').focus();
-        }
-    } else {
-        // Hide both if no category is selected
-        detailsContainer.style.display = 'none';
-        otherContainer.style.display = 'none';
-    }
-}
-
-// Get the complete purpose string combining category and details
-function getFullBusinessPurpose() {
-    const category = document.getElementById('purposeCategory').value;
-    const details = document.getElementById('purposeDetail').value.trim();
-    const otherInput = document.getElementById('otherCategoryInput').value.trim();
-    
-    if (!category) return '';
-    
-    // Use the custom category if "Other" is selected and has input
-    const finalCategory = (category === 'Other' && otherInput) ? otherInput : category;
-    
-    if (details) {
-        return `${finalCategory}: ${details}`;
-    } else {
-        return finalCategory;
-    }
-}
-
-function calculateEndOdometer() {
-    const startOdo = parseFloat(document.getElementById('startOdometer').value);
-    const tripDistance = parseFloat(document.getElementById('tripDistance').value);
-    
-    if (!isNaN(startOdo) && !isNaN(tripDistance) && tripDistance > 0) {
-        const endOdo = startOdo + tripDistance;
-        document.getElementById('endOdometer').value = endOdo.toFixed(1);
-        calculateMiles();
-        closeOdometerDialog();
-    } else {
-        alert('Please enter a valid trip distance.');
-    }
-}
-
-function editTrip(tripId) {
-    // Get the trip data
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        const tripToEdit = trips.find(trip => trip.id === tripId);
-        
-        if (tripToEdit) {
-            // Set form to edit mode
-            document.getElementById('formTitle').textContent = 'Edit Trip';
-            document.getElementById('editTripId').value = tripId;
-            
-            // Fill the form with trip data - use the date string directly
-            document.getElementById('date').value = tripToEdit.date;
-            document.getElementById('startLocation').value = tripToEdit.startLocation;
-            document.getElementById('destination').value = tripToEdit.destination;
-            document.getElementById('startOdometer').value = tripToEdit.startOdo;
-            document.getElementById('endOdometer').value = tripToEdit.endOdo;
-            
-            // Set work status if available
-            if (tripToEdit.workStatus) {
-                document.getElementById('workStatus').value = tripToEdit.workStatus;
-            } else {
-                document.getElementById('workStatus').value = '';
-            }
-            
-            calculateMiles();
-            
-            // Handle the purpose field
-            let category = '';
-            let details = '';
-            
-            if (tripToEdit.purpose) {
-                // Split the purpose into category and details if it contains a colon
-                const colonIndex = tripToEdit.purpose.indexOf(':');
-                if (colonIndex !== -1) {
-                    category = tripToEdit.purpose.substring(0, colonIndex).trim();
-                    details = tripToEdit.purpose.substring(colonIndex + 1).trim();
-                } else {
-                    category = tripToEdit.purpose.trim();
-                }
-                
-                // Set category if it matches one of our options
-                const selectElement = document.getElementById('purposeCategory');
-                let categoryFound = false;
-                
-                for (let i = 0; i < selectElement.options.length; i++) {
-                    if (selectElement.options[i].value === category) {
-                        selectElement.selectedIndex = i;
-                        categoryFound = true;
-                        handleCategoryChange();
-                        document.getElementById('purposeDetail').value = details;
-                        break;
-                    }
-                }
-                
-                // If no match found and it's not empty, set as "Other"
-                if (!categoryFound && category) {
-                    // Find the "Other" option
-                    for (let i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === 'Other') {
-                            selectElement.selectedIndex = i;
-                            handleCategoryChange();
-                            document.getElementById('otherCategoryInput').value = category;
-                            document.getElementById('purposeDetail').value = details;
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            // Show the form
-            document.getElementById('formOptions').style.display = 'none';
-            document.getElementById('tripForm').style.display = 'block';
-            document.getElementById('toggleFormBtn').textContent = 'Hide Form';
-            
-            // Calculate trip distance if not already set
-            if (!document.getElementById('tripDistance').value) {
-                const start = parseFloat(tripToEdit.startOdo);
-                const end = parseFloat(tripToEdit.endOdo);
-                if (!isNaN(start) && !isNaN(end)) {
-                    document.getElementById('tripDistance').value = (end - start).toFixed(1);
-                }
-            }
-        }
-    }
-}
-
-function saveTrip() {
-    const editId = document.getElementById('editTripId').value;
-    
-    if (editId) {
-        // We're editing an existing trip
-        updateTrip(editId);
-    } else {
-        // We're adding a new trip
-        addTrip();
-    }
-}
-
-function updateTrip(tripId) {
-    const date = document.getElementById('date').value;
-    const startLocation = document.getElementById('startLocation').value;
-    const destination = document.getElementById('destination').value;
-    const purposeCategory = document.getElementById('purposeCategory').value;
-    const workStatus = document.getElementById('workStatus').value;
-    const startOdo = document.getElementById('startOdometer').value;
-    const endOdo = document.getElementById('endOdometer').value;
-    
-    // Get the full purpose string (combining category and details)
-    const purpose = getFullBusinessPurpose();
-    
-    if (!date || !startLocation || !destination || !purposeCategory || !workStatus || !startOdo || !endOdo) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
-    
-    if (miles <= 0) {
-        alert('Ending odometer reading must be greater than starting reading');
-        return;
-    }
-    
-    // Get existing data
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        let trips = JSON.parse(savedData);
-        
-        // Find the trip to update
-        const tripIndex = trips.findIndex(trip => trip.id == tripId);
-        
-        if (tripIndex !== -1) {
-            // Update the trip
-            trips[tripIndex] = {
-                ...trips[tripIndex],
-                date: date, // Store the exact date string from the input
-                startLocation: startLocation,
-                destination: destination,
-                purpose: purpose,
-                workStatus: workStatus,
-                startOdo: startOdo,
-                endOdo: endOdo,
-                miles: miles
-            };
-            
-            // Save updated data
-            localStorage.setItem('mileageData', JSON.stringify(trips));
-            
-            // Reset form and UI
-            resetFormAfterSave();
-            
-            // Update display
-            renderTripsList();
-            updateSummary();
-        }
-    }
-}
-
-function addTrip() {
-    const date = document.getElementById('date').value;
-    const startLocation = document.getElementById('startLocation').value;
-    const destination = document.getElementById('destination').value;
-    const purposeCategory = document.getElementById('purposeCategory').value;
-    const workStatus = document.getElementById('workStatus').value;
-    const startOdo = document.getElementById('startOdometer').value;
-    const endOdo = document.getElementById('endOdometer').value;
-    
-    // Get the full purpose string (combining category and details)
-    const purpose = getFullBusinessPurpose();
-    
-    if (!date || !startLocation || !destination || !purposeCategory || !workStatus || !startOdo || !endOdo) {
-        alert('Please fill in all required fields');
-        return;
-    }
-    
-    const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
-    
-    if (miles <= 0) {
-        alert('Ending odometer reading must be greater than starting reading');
-        return;
-    }
-    
-    // Get existing data or initialize new array
-    let trips = [];
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        trips = JSON.parse(savedData);
-    }
-    
-    // IMPORTANT: Store the date string exactly as it is without Date object conversion
-    // This prevents timezone issues that can shift the day
-    
-    // Add new trip to array
-    trips.push({
-        date: date, // Store the exact date string from the input
-        startLocation: startLocation,
-        destination: destination,
-        purpose: purpose,
-        workStatus: workStatus,
-        startOdo: startOdo,
-        endOdo: endOdo,
-        miles: miles,
-        id: Date.now() // Unique ID for easier deletion
-    });
-    
-    // Save updated data
-    localStorage.setItem('mileageData', JSON.stringify(trips));
-    
-    // Reset form and UI
-    resetFormAfterSave();
-    
-    // Update display
-    renderTripsList();
-    updateSummary();
-}
-
-function resetFormAfterSave() {
-    // Reset edit mode
-    document.getElementById('formTitle').textContent = 'Add New Trip';
-    document.getElementById('editTripId').value = '';
-    
-    // Clear form
-    clearForm();
-    
-    // Hide form
-    document.getElementById('tripForm').style.display = 'none';
-    document.getElementById('toggleFormBtn').textContent = 'Add New Trip';
-}
-
-function cancelEdit() {
-    resetFormAfterSave();
-}
-
-function deleteTrip(tripId) {
-    if (confirm('Are you sure you want to delete this trip?')) {
-        // Get current data
-        const savedData = localStorage.getItem('mileageData');
-        if (savedData) {
-            let trips = JSON.parse(savedData);
-            // Filter out the trip to delete
-            trips = trips.filter(trip => trip.id !== tripId);
-            // Save updated data
-            localStorage.setItem('mileageData', JSON.stringify(trips));
-            // Refresh display
-            renderTripsList();
-            updateSummary();
-        }
-    }
-}
-
-function renderTripsList() {
-    const tripsList = document.getElementById('tripsList');
-    tripsList.innerHTML = '';
-    
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        
-        if (trips.length === 0) {
-            tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
-            return;
-        }
-        
-        // Sort trips by date (newest first)
-        // Use a custom sorting function that handles string dates correctly
-        trips.sort((a, b) => {
-            // Try to compare dates as strings first (in YYYY-MM-DD format)
-            if (a.date > b.date) return -1;
-            if (a.date < b.date) return 1;
-            return 0;
-        });
-        
-        for (const trip of trips) {
-            const tripCard = document.createElement('div');
-            tripCard.className = 'card-view';
-            
-            // Format date for display - use a safe approach that won't shift dates
-            let formattedDate = trip.date;
-            
-            // If the date is in YYYY-MM-DD format, convert it to a more readable format
-            if (/^\d{4}-\d{2}-\d{2}$/.test(trip.date)) {
-                const [year, month, day] = trip.date.split('-');
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                formattedDate = `${months[parseInt(month) - 1]} ${parseInt(day)}, ${year}`;
-            }
-            
-            tripCard.innerHTML = `
-                <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
-                <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
-                <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
-                <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
-                <div><span class="label">Status:</span> <span class="value">${trip.workStatus || 'Not specified'}</span></div>
-                <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
-                <div class="card-buttons">
-                    <button class="edit-btn" onclick="editTrip(${trip.id})">Edit</button>
-                    <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
-                </div>
-            `;
-            
-            tripsList.appendChild(tripCard);
-        }
-    } else {
-        tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
-    }
-}
-
-function updateSummary() {
-    let totalMiles = 0;
-    
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
-    }
-    
-    document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
-    
-    // Calculate tax deduction (using 2024 rate of 67 cents per mile)
-    const taxDeduction = totalMiles * 0.67;
-    document.getElementById('taxDeduction').textContent = taxDeduction.toFixed(2);
-}
-
-function exportToCSV() {
-    const savedData = localStorage.getItem('mileageData');
-    if (!savedData || JSON.parse(savedData).length === 0) {
-        alert('No data to export');
-        return;
-    }
-    
-    const trips = JSON.parse(savedData);
-    let csv = 'Date,Starting Location,Destination,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
-    
-    for (const trip of trips) {
-        const rowData = [
-            trip.date,
-            '"' + trip.startLocation + '"',
-            '"' + trip.destination + '"',
-            '"' + trip.purpose + '"',
-            trip.startOdo,
-            trip.endOdo,
-            trip.miles
-        ];
-        csv += rowData.join(',') + '\n';
-    }
-    
-    const totalMiles = document.getElementById('totalMiles').textContent;
-    const taxDeduction = document.getElementById('taxDeduction').textContent;
-    csv += '\nTotal Miles,' + totalMiles + '\nEstimated Tax Deduction,$' + taxDeduction;
-    
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'mileage_tracker_' + new Date().toISOString().split('T')[0] + '.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-function clearAll() {
-    if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-        localStorage.removeItem('mileageData');
-        renderTripsList();
-        updateSummary();
-    }
-}
-
-function loadSavedData() {
-    // Just load the data, rendering happens separately
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        // Add IDs to older entries if they don't have them
-        const trips = JSON.parse(savedData);
-        let needsUpdate = false;
-        
-        for (let i = 0; i < trips.length; i++) {
-            if (!trips[i].id) {
-                trips[i].id = Date.now() + i;
-                needsUpdate = true;
-            }
-        }
-        
-        if (needsUpdate) {
-            localStorage.setItem('mileageData', JSON.stringify(trips));
-        }
-    }
-}
-</script>
-</body>
-</html>
+        if (categorySelect.
