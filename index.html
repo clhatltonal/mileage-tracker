@@ -290,29 +290,6 @@
             border-top: 1px solid #e9ecef;
         }
 
-        .dialog-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dialog-box {
-            background-color: white;
-            padding: var(--spacing-lg);
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            z-index: 1000;
-            width: 90%;
-            max-width: 500px;
-        }
-
         .trip-options {
             display: flex;
             gap: var(--spacing-md);
@@ -322,6 +299,17 @@
         .trip-option {
             flex: 1;
             min-width: 150px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 200px;
         }
 
         @media (min-width: 768px) {
@@ -355,30 +343,6 @@
             color: var(--neutral);
             margin-bottom: var(--spacing-md);
         }
-
-        /* Form field validation */
-        .form-group.error input,
-        .form-group.error select {
-            border-color: var(--danger);
-        }
-
-        .error-message {
-            color: var(--danger);
-            font-size: 0.85rem;
-            margin-top: 4px;
-        }
-
-        /* Responsive grid for larger screens */
-        @media (min-width: 992px) {
-            .form-row {
-                display: flex;
-                gap: var(--spacing-md);
-            }
-
-            .form-col {
-                flex: 1;
-            }
-        }
     </style>
 </head>
 <body>
@@ -391,7 +355,7 @@
             <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
         </div>
         
-        <button id="toggleFormBtn" class="btn btn-primary btn-block btn-icon">
+        <button id="addTripBtn" class="btn btn-primary btn-block btn-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -399,10 +363,10 @@
             Add New Trip
         </button>
         
-        <div id="formOptions" style="display:none; margin: var(--spacing-md) 0;">
+        <div id="tripOptions" class="card" style="display:none; margin-top: var(--spacing-md);">
             <div class="trip-options">
                 <div class="trip-option">
-                    <button onclick="openNewForm(true)" class="btn btn-secondary btn-block btn-icon">
+                    <button id="continueLastBtn" class="btn btn-secondary btn-block btn-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="17 1 21 5 17 9"></polyline>
                             <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
@@ -413,7 +377,7 @@
                     </button>
                 </div>
                 <div class="trip-option">
-                    <button onclick="openNewForm(false)" class="btn btn-primary btn-block btn-icon">
+                    <button id="newTripBtn" class="btn btn-primary btn-block btn-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
@@ -426,7 +390,7 @@
             </div>
         </div>
         
-        <div id="tripForm" class="card" style="display:none;">
+        <div id="tripForm" class="card" style="display:none; margin-top: var(--spacing-md);">
             <h3 id="formTitle">Add New Trip</h3>
             <input type="hidden" id="editTripId" value="">
             
@@ -472,7 +436,7 @@
             
             <div class="form-group">
                 <label for="purposeCategory">Business Purpose Category:</label>
-                <select id="purposeCategory" onchange="handleCategoryChange()">
+                <select id="purposeCategory">
                     <option value="">-- Select a Category --</option>
                     <option value="Client Meetings">Client Meetings</option>
                     <option value="Client Lunch">Client Lunch</option>
@@ -499,20 +463,20 @@
                 <div class="form-col">
                     <div class="form-group">
                         <label for="startOdometer">Starting Odometer:</label>
-                        <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric" onchange="calculateMiles()">
+                        <input type="number" id="startOdometer" placeholder="Starting miles" inputmode="numeric">
                     </div>
                 </div>
                 <div class="form-col">
                     <div class="form-group">
                         <label for="endOdometer">Ending Odometer:</label>
-                        <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric" onchange="calculateMiles()">
+                        <input type="number" id="endOdometer" placeholder="Ending miles" inputmode="numeric">
                     </div>
                 </div>
             </div>
             
             <div class="form-group" id="tripDistanceContainer">
                 <label for="tripDistance">Trip Distance (miles):</label>
-                <input type="number" id="tripDistance" placeholder="Enter expected miles" inputmode="numeric" onchange="calculateEndOdometer()">
+                <input type="number" id="tripDistance" placeholder="Enter expected miles" inputmode="numeric">
             </div>
             
             <div class="form-group">
@@ -521,17 +485,15 @@
             </div>
             
             <div class="btn-group">
-                <button class="btn btn-secondary" id="saveButton" onclick="saveTrip()">
-                    <span class="btn-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                            <polyline points="7 3 7 8 15 8"></polyline>
-                        </svg>
-                        Save Trip
-                    </span>
+                <button id="saveButton" class="btn btn-secondary btn-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    Save Trip
                 </button>
-                <button class="btn btn-neutral" onclick="cancelEdit()">Cancel</button>
+                <button id="cancelButton" class="btn btn-neutral">Cancel</button>
             </div>
         </div>
         
@@ -552,7 +514,7 @@
         </div>
         
         <div class="btn-group">
-            <button class="btn btn-primary btn-icon" onclick="exportToCSV()">
+            <button id="exportButton" class="btn btn-primary btn-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
@@ -560,7 +522,7 @@
                 </svg>
                 Export to CSV
             </button>
-            <button class="btn btn-danger btn-icon" onclick="clearAll()">
+            <button id="clearButton" class="btn btn-danger btn-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -572,226 +534,200 @@
         </div>
     </div>
 
-<script>
-// Load saved data from localStorage if available
-document.addEventListener('DOMContentLoaded', function() {
-    loadSavedData();
-    renderTripsList();
-    updateSummary();
-    
-    // Set today's date by default for new trips
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('date').value = today;
-    
-    // Add event listeners for automatic miles calculation
-    document.getElementById('startOdometer').addEventListener('input', calculateMiles);
-    document.getElementById('endOdometer').addEventListener('input', calculateMiles);
-    
-    // Add event listener for the Add New Trip button
-    document.getElementById('toggleFormBtn').addEventListener('click', toggleFormOptions);
-    
-    // Initialize formOptions display style explicitly
-    document.getElementById('formOptions').style.display = 'none';
-    document.getElementById('tripForm').style.display = 'none';
-    
-    // Close dialogs if user clicks outside
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('dialog-overlay')) {
-            const dialogs = document.querySelectorAll('.dialog-overlay');
-            dialogs.forEach(dialog => {
-                dialog.style.display = 'none';
-            });
-        }
+    <script>
+    // Wait for the DOM to be fully loaded before attaching event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize UI state
+        loadSavedData();
+        renderTripsList();
+        updateSummary();
+        
+        // Set today's date by default for new trips
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('date').value = today;
+        
+        // Get UI elements
+        const addTripBtn = document.getElementById('addTripBtn');
+        const tripOptions = document.getElementById('tripOptions');
+        const tripForm = document.getElementById('tripForm');
+        const continueLastBtn = document.getElementById('continueLastBtn');
+        const newTripBtn = document.getElementById('newTripBtn');
+        const cancelButton = document.getElementById('cancelButton');
+        const saveButton = document.getElementById('saveButton');
+        const clearButton = document.getElementById('clearButton');
+        const exportButton = document.getElementById('exportButton');
+        const purposeCategory = document.getElementById('purposeCategory');
+        const startOdometer = document.getElementById('startOdometer');
+        const endOdometer = document.getElementById('endOdometer');
+        const tripDistance = document.getElementById('tripDistance');
+        
+        // Add event listeners
+        addTripBtn.addEventListener('click', function() {
+            tripOptions.style.display = tripOptions.style.display === 'none' ? 'block' : 'none';
+            if (tripOptions.style.display === 'block') {
+                tripForm.style.display = 'none';
+                addTripBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Cancel`;
+            } else {
+                addTripBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add New Trip`;
+            }
+        });
+        
+        continueLastBtn.addEventListener('click', function() {
+            openForm(true);
+        });
+        
+        newTripBtn.addEventListener('click', function() {
+            openForm(false);
+        });
+        
+        cancelButton.addEventListener('click', function() {
+            hideForm();
+        });
+        
+        saveButton.addEventListener('click', function() {
+            saveTrip();
+        });
+        
+        purposeCategory.addEventListener('change', function() {
+            handleCategoryChange();
+        });
+        
+        startOdometer.addEventListener('input', calculateMiles);
+        endOdometer.addEventListener('input', calculateMiles);
+        tripDistance.addEventListener('input', calculateEndOdometer);
+        
+        clearButton.addEventListener('click', function() {
+            clearAll();
+        });
+        
+        exportButton.addEventListener('click', function() {
+            exportToCSV();
+        });
     });
-});
 
-function toggleFormOptions() {
-    console.log("toggleFormOptions called");
-    const formOptions = document.getElementById('formOptions');
-    const btn = document.getElementById('toggleFormBtn');
-    const form = document.getElementById('tripForm');
-    
-    // Check if elements exist and log their state for debugging
-    console.log("formOptions:", formOptions);
-    console.log("btn:", btn);
-    console.log("form:", form);
-    
-    if (!formOptions || !btn || !form) {
-        console.error("One or more elements not found");
-        return;
-    }
-    
-    console.log("Current formOptions display:", formOptions.style.display);
-    
-    // Force initial display style if not set
-    if (formOptions.style.display === "") {
-        formOptions.style.display = "none";
-    }
-    
-    if (formOptions.style.display === 'none') {
-        formOptions.style.display = 'block';
-        btn.innerHTML = `
+    function openForm(continueLast) {
+        // Hide options
+        document.getElementById('tripOptions').style.display = 'none';
+        
+        // Show form
+        document.getElementById('tripForm').style.display = 'block';
+        
+        // Update add trip button
+        document.getElementById('addTripBtn').innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
-            Cancel
-        `;
-        form.style.display = 'none'; // Make sure form is hidden
-    } else {
-        formOptions.style.display = 'none';
-        btn.innerHTML = `
+            Hide Form`;
+        
+        // Clear the form first
+        clearForm();
+        
+        // If continuing from last trip, load the data
+        if (continueLast) {
+            loadLastTripData();
+        } else {
+            // For blank form, just set today's date
+            document.getElementById('date').valueAsDate = new Date();
+        }
+    }
+
+    function hideForm() {
+        // Hide form
+        document.getElementById('tripForm').style.display = 'none';
+        document.getElementById('tripOptions').style.display = 'none';
+        
+        // Update add trip button
+        document.getElementById('addTripBtn').innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
-            Add New Trip
-        `;
-        form.style.display = 'none'; // Make sure form is hidden
+            Add New Trip`;
     }
-}
 
-function openNewForm(continueLast) {
-    // Hide options and show form
-    document.getElementById('formOptions').style.display = 'none';
-    document.getElementById('tripForm').style.display = 'block';
-    document.getElementById('toggleFormBtn').innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-        Hide Form
-    `;
-    
-    // Clear the form first
-    clearForm();
-    
-    // If continuing from last trip, load the data
-    if (continueLast) {
-        loadLastTripData();
-    } else {
-        // For blank form, just set today's date
+    function clearForm() {
+        // Clear form values
+        document.getElementById('formTitle').textContent = 'Add New Trip';
+        document.getElementById('editTripId').value = '';
         document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('startLocation').value = '';
+        document.getElementById('destination').value = '';
+        document.getElementById('purposeCategory').value = '';
+        document.getElementById('purposeDetail').value = '';
+        document.getElementById('otherCategoryInput').value = '';
+        document.getElementById('workStatus').value = '';
+        document.getElementById('purposeDetailContainer').style.display = 'none';
+        document.getElementById('otherCategoryContainer').style.display = 'none';
+        document.getElementById('startOdometer').value = '';
+        document.getElementById('endOdometer').value = '';
+        document.getElementById('tripDistance').value = '';
+        document.getElementById('milesDriven').textContent = '0';
     }
-}
 
-function clearForm() {
-    // Clear all form inputs
-    document.getElementById('date').valueAsDate = new Date(); // Set to today by default
-    document.getElementById('startLocation').value = '';
-    document.getElementById('destination').value = '';
-    document.getElementById('purposeCategory').value = '';
-    document.getElementById('purposeDetail').value = '';
-    document.getElementById('otherCategoryInput').value = '';
-    document.getElementById('workStatus').value = '';
-    document.getElementById('purposeDetailContainer').style.display = 'none';
-    document.getElementById('otherCategoryContainer').style.display = 'none';
-    document.getElementById('startOdometer').value = '';
-    document.getElementById('endOdometer').value = '';
-    document.getElementById('tripDistance').value = '';
-    document.getElementById('milesDriven').textContent = '0';
-    
-    // Clear any error states
-    const errorFields = document.querySelectorAll('.form-group.error');
-    errorFields.forEach(field => {
-        field.classList.remove('error');
-        const errorMsg = field.querySelector('.error-message');
-        if (errorMsg) errorMsg.remove();
-    });
-}
-
-function loadLastTripData() {
-    const savedData = localStorage.getItem('mileageData');
-    if (savedData) {
-        const trips = JSON.parse(savedData);
-        if (trips.length > 0) {
-            // Get the most recent trip
-            const lastTrip = trips[trips.length - 1];
-            
-            // Use last destination as new starting point, but leave destination blank
-            document.getElementById('startLocation').value = lastTrip.destination;
-            document.getElementById('destination').value = ''; // Leave destination blank
-            
-            // Handle purpose category and details
-            let category = '';
-            let details = '';
-            
-            if (lastTrip.purpose) {
-                // Split the purpose into category and details if it contains a colon
-                const colonIndex = lastTrip.purpose.indexOf(':');
-                if (colonIndex !== -1) {
-                    category = lastTrip.purpose.substring(0, colonIndex).trim();
-                    details = lastTrip.purpose.substring(colonIndex + 1).trim();
-                } else {
-                    category = lastTrip.purpose.trim();
-                }
+    function loadLastTripData() {
+        const savedData = localStorage.getItem('mileageData');
+        if (savedData) {
+            const trips = JSON.parse(savedData);
+            if (trips.length > 0) {
+                // Get the most recent trip
+                const lastTrip = trips[trips.length - 1];
                 
-                // Set category if it matches one of our options
-                const selectElement = document.getElementById('purposeCategory');
-                for (let i = 0; i < selectElement.options.length; i++) {
-                    if (selectElement.options[i].value === category) {
-                        selectElement.selectedIndex = i;
-                        handleCategoryChange();
-                        document.getElementById('purposeDetail').value = details;
-                        break;
+                // Use last destination as new starting point, but leave destination blank
+                document.getElementById('startLocation').value = lastTrip.destination;
+                document.getElementById('destination').value = ''; // Leave destination blank
+                
+                // Handle purpose category and details
+                let category = '';
+                let details = '';
+                
+                if (lastTrip.purpose) {
+                    // Split the purpose into category and details if it contains a colon
+                    const colonIndex = lastTrip.purpose.indexOf(':');
+                    if (colonIndex !== -1) {
+                        category = lastTrip.purpose.substring(0, colonIndex).trim();
+                        details = lastTrip.purpose.substring(colonIndex + 1).trim();
+                    } else {
+                        category = lastTrip.purpose.trim();
                     }
-                }
-                
-                // If no match found and it's not empty, set as "Other"
-                if (selectElement.value === '' && category) {
-                    // Find the "Other" option
+                    
+                    // Set category if it matches one of our options
+                    const selectElement = document.getElementById('purposeCategory');
                     for (let i = 0; i < selectElement.options.length; i++) {
-                        if (selectElement.options[i].value === 'Other') {
+                        if (selectElement.options[i].value === category) {
                             selectElement.selectedIndex = i;
                             handleCategoryChange();
-                            document.getElementById('otherCategoryInput').value = category;
                             document.getElementById('purposeDetail').value = details;
                             break;
                         }
                     }
+                    
+                    // If no match found and it's not empty, set as "Other"
+                    if (selectElement.value === '' && category) {
+                        // Find the "Other" option
+                        for (let i = 0; i < selectElement.options.length; i++) {
+                            if (selectElement.options[i].value === 'Other') {
+                                selectElement.selectedIndex = i;
+                                handleCategoryChange();
+                                document.getElementById('otherCategoryInput').value = category;
+                                document.getElementById('purposeDetail').value = details;
+                                break;
+                            }
+                        }
+                    }
                 }
-            }
-            
-            // Set the work status if available
-            if (lastTrip.workStatus) {
-                document.getElementById('workStatus').value = lastTrip.workStatus;
-            }
-            
-            // Set the ending odometer as the starting odometer
-            document.getElementById('startOdometer').value = lastTrip.endOdo;
-            
-            // Keep the same date as the last trip
-            document.getElementById('date').value = lastTrip.date;
-        }
-    }
-}
-
-function calculateMiles() {
-    const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
-    const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
-    const miles = Math.max(0, endOdo - startOdo);
-    document.getElementById('milesDriven').textContent = miles.toFixed(1);
-}
-
-function calculateEndOdometer() {
-    const startOdo = parseFloat(document.getElementById('startOdometer').value);
-    const tripDistance = parseFloat(document.getElementById('tripDistance').value);
-    
-    if (!isNaN(startOdo) && !isNaN(tripDistance) && tripDistance > 0) {
-        const endOdo = startOdo + tripDistance;
-        document.getElementById('endOdometer').value = endOdo.toFixed(1);
-        calculateMiles();
-    }
-}
-
-function handleCategoryChange() {
-    const categorySelect = document.getElementById('purposeCategory');
-    const otherContainer = document.getElementById('otherCategoryContainer');
-    const detailsContainer = document.getElementById('purposeDetailContainer');
-    
-    // Always show the details container if a category is selected
-    if (categorySelect.value) {
-        detailsContainer.style.display = 'block';
-        
-        // Only show the "Other" input if "Other" is selected
-        if (categorySelect.
+                
+                // Set the work status if available
+                if (lastTrip.workStatus) {
+                    document.getElementById('workStatus').value = lastTrip.workStatus;
+                }
