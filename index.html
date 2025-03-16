@@ -313,9 +313,10 @@ function loadLastTripData() {
             // Get the most recent trip
             const lastTrip = trips[trips.length - 1];
             
-            // Pre-fill the form with last trip's data
-            document.getElementById('startLocation').value = lastTrip.startLocation;
-            document.getElementById('destination').value = lastTrip.destination;
+            // For potential return trips: use last destination as new starting point
+            // and last starting point as new destination
+            document.getElementById('startLocation').value = lastTrip.destination;
+            document.getElementById('destination').value = lastTrip.startLocation;
             
             // Handle purpose category and details
             let category = '';
