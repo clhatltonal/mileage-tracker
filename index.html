@@ -247,6 +247,15 @@
             <label for="purposeDetail">Business Purpose Details (optional):</label>
             <input type="text" id="purposeDetail" placeholder="Enter specific details (optional)">
         </div>
+        <div class="form-group">
+            <label for="workStatus">Work Status:</label>
+            <select id="workStatus">
+                <option value="">-- Select Status --</option>
+                <option value="Start Work">Start Work</option>
+                <option value="Work">Work</option>
+                <option value="Start Work Finish">Start Work Finish</option>
+            </select>
+        </div>
         <div class="form-group" id="otherCategoryContainer" style="display:none;">
             <label for="otherCategoryInput">Specify Other Category:</label>
             <input type="text" id="otherCategoryInput" placeholder="Enter custom category">
@@ -355,6 +364,7 @@ function clearForm() {
     document.getElementById('purposeCategory').value = '';
     document.getElementById('purposeDetail').value = '';
     document.getElementById('otherCategoryInput').value = '';
+    document.getElementById('workStatus').value = '';
     document.getElementById('purposeDetailContainer').style.display = 'none';
     document.getElementById('otherCategoryContainer').style.display = 'none';
     document.getElementById('startOdometer').value = '';
@@ -428,6 +438,11 @@ function loadLastTripData() {
                         }
                     }
                 }
+            }
+            
+            // Set the work status if available
+            if (lastTrip.workStatus) {
+                document.getElementById('workStatus').value = lastTrip.workStatus;
             }
             
             // Set the ending odometer as the starting odometer
@@ -533,6 +548,14 @@ function editTrip(tripId) {
             document.getElementById('destination').value = tripToEdit.destination;
             document.getElementById('startOdometer').value = tripToEdit.startOdo;
             document.getElementById('endOdometer').value = tripToEdit.endOdo;
+            
+            // Set work status if available
+            if (tripToEdit.workStatus) {
+                document.getElementById('workStatus').value = tripToEdit.workStatus;
+            } else {
+                document.getElementById('workStatus').value = '';
+            }
+            
             calculateMiles();
             
             // Handle the purpose field
@@ -612,13 +635,14 @@ function updateTrip(tripId) {
     const startLocation = document.getElementById('startLocation').value;
     const destination = document.getElementById('destination').value;
     const purposeCategory = document.getElementById('purposeCategory').value;
+    const workStatus = document.getElementById('workStatus').value;
     const startOdo = document.getElementById('startOdometer').value;
     const endOdo = document.getElementById('endOdometer').value;
     
     // Get the full purpose string (combining category and details)
     const purpose = getFullBusinessPurpose();
     
-    if (!date || !startLocation || !destination || !purposeCategory || !startOdo || !endOdo) {
+    if (!date || !startLocation || !destination || !purposeCategory || !workStatus || !startOdo || !endOdo) {
         alert('Please fill in all required fields');
         return;
     }
@@ -646,6 +670,7 @@ function updateTrip(tripId) {
                 startLocation: startLocation,
                 destination: destination,
                 purpose: purpose,
+                workStatus: workStatus,
                 startOdo: startOdo,
                 endOdo: endOdo,
                 miles: miles
@@ -669,13 +694,14 @@ function addTrip() {
     const startLocation = document.getElementById('startLocation').value;
     const destination = document.getElementById('destination').value;
     const purposeCategory = document.getElementById('purposeCategory').value;
+    const workStatus = document.getElementById('workStatus').value;
     const startOdo = document.getElementById('startOdometer').value;
     const endOdo = document.getElementById('endOdometer').value;
     
     // Get the full purpose string (combining category and details)
     const purpose = getFullBusinessPurpose();
     
-    if (!date || !startLocation || !destination || !purposeCategory || !startOdo || !endOdo) {
+    if (!date || !startLocation || !destination || !purposeCategory || !workStatus || !startOdo || !endOdo) {
         alert('Please fill in all required fields');
         return;
     }
@@ -700,6 +726,7 @@ function addTrip() {
         startLocation: startLocation,
         destination: destination,
         purpose: purpose,
+        workStatus: workStatus,
         startOdo: startOdo,
         endOdo: endOdo,
         miles: miles,
@@ -780,6 +807,7 @@ function renderTripsList() {
                 <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
                 <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
                 <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
+                <div><span class="label">Status:</span> <span class="value">${trip.workStatus || 'Not specified'}</span></div>
                 <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
                 <div class="card-buttons">
                     <button class="edit-btn" onclick="editTrip(${trip.id})">Edit</button>
