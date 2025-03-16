@@ -234,8 +234,6 @@
                 <input type="text" id="startLocation" placeholder="Home, Office, etc." list="startLocations">
                 <datalist id="startLocations">
                     <option value="West Cave Loop Dripping Springs">
-                    <option value="Home">
-                    <option value="Office">
                 </datalist>
             </div>
         </div>
@@ -245,8 +243,6 @@
                 <input type="text" id="destination" placeholder="Client site, Meeting, etc." list="destinations">
                 <datalist id="destinations">
                     <option value="West Cave Loop Dripping Springs">
-                    <option value="Home">
-                    <option value="Office">
                 </datalist>
             </div>
         </div>
@@ -468,8 +464,8 @@ function loadLastTripData() {
             // Set the ending odometer as the starting odometer
             document.getElementById('startOdometer').value = lastTrip.endOdo;
             
-            // Current date for the new trip
-            document.getElementById('date').valueAsDate = new Date();
+            // Keep the same date as the last trip
+            document.getElementById('date').value = lastTrip.date;
         }
     }
 }
