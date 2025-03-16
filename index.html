@@ -16,7 +16,6 @@
             color: #2c3e50;
             font-size: 1.5rem;
         }
-        /* Mobile-first responsive design */
         .card-view {
             margin-bottom: 15px;
             border: 1px solid #ddd;
@@ -35,7 +34,6 @@
         .card-view .value {
             margin-left: 5px;
         }
-        /* Form styling */
         .input-form {
             background-color: #f2f2f2;
             padding: 15px;
@@ -60,7 +58,6 @@
             font-size: 1rem;
             box-sizing: border-box;
         }
-        /* Use proper mobile input types */
         input[type="number"] {
             -moz-appearance: textfield;
         }
@@ -125,7 +122,6 @@
         .toggle-form-btn:hover {
             background-color: #8e44ad;
         }
-        /* For tablet and desktop */
         @media (min-width: 768px) {
             body {
                 margin: 20px;
@@ -150,7 +146,7 @@
         <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024. This rate may change annually, so check the IRS website for the most current rate.</p>
     </div>
     
-    <button class="toggle-form-btn" onclick="toggleTripForm()">Add New Trip</button>
+    <button id="toggleFormBtn" class="toggle-form-btn" onclick="toggleTripForm()">Add New Trip</button>
     
     <div id="tripForm" class="input-form" style="display:none;">
         <div class="form-group">
@@ -197,227 +193,233 @@
         <button onclick="clearAll()">Clear All</button>
     </div>
 
-    <script>
-        // Load saved data from localStorage if available
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSavedData();
-            renderTripsList();
-            
-            // Add event listeners for automatic miles calculation
-            document.getElementById('startOdometer').addEventListener('input', calculateMiles);
-            document.getElementById('endOdometer').addEventListener('input', calculateMiles);
-        });
-        
-        function toggleTripForm() {
-            const form = document.getElementById('tripForm');
-            if (form.style.display === 'none') {
-                form.style.display = 'block';
-                document.querySelector('.toggle-form-btn').textContent = 'Hide Form';
-            } else {
-                form.style.display = 'none';
-                document.querySelector('.toggle-form-btn').textContent = 'Add New Trip';
-            }
-        }
-        
-        function calculateMiles() {
-            const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
-            const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
-            const miles = Math.max(0, endOdo - startOdo);
-            document.getElementById('milesDriven').textContent = miles.toFixed(1);
-        }
-        
-        function addTrip() {
-            const date = document.getElementById('date').value;
-            const startLocation = document.getElementById('startLocation').value;
-            const destination = document.getElementById('destination').value;
-            const purpose = document.getElementById('purpose').value;
-            const startOdo = document.getElementById('startOdometer').value;
-            const endOdo = document.getElementById('endOdometer').value;
-            
-            if (!date || !startLocation || !destination || !purpose || !startOdo || !endOdo) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
-            
-            if (miles <= 0) {
-                alert('Ending odometer reading must be greater than starting reading');
-                return;
-            }
-            
-            // Get existing data or initialize new array
-            let trips = [];
-            const savedData = localStorage.getItem('mileageData');
-            if (savedData) {
-                trips = JSON.parse(savedData);
-            }
-            
-            // Add new trip to array
-            trips.push({
-                date: date,
-                startLocation: startLocation,
-                destination: destination,
-                purpose: purpose,
-                startOdo: startOdo,
-                endOdo: endOdo,
-                miles: miles,
-                id: Date.now() // Unique ID for easier deletion
-            });
-            
+<script>
+// Load saved data from localStorage if available
+document.addEventListener('DOMContentLoaded', function() {
+    loadSavedData();
+    renderTripsList();
+    updateSummary();
+    
+    // Add event listeners for automatic miles calculation
+    document.getElementById('startOdometer').addEventListener('input', calculateMiles);
+    document.getElementById('endOdometer').addEventListener('input', calculateMiles);
+});
+
+function toggleTripForm() {
+    const form = document.getElementById('tripForm');
+    const btn = document.getElementById('toggleFormBtn');
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+        btn.textContent = 'Hide Form';
+    } else {
+        form.style.display = 'none';
+        btn.textContent = 'Add New Trip';
+    }
+}
+
+function calculateMiles() {
+    const startOdo = parseFloat(document.getElementById('startOdometer').value) || 0;
+    const endOdo = parseFloat(document.getElementById('endOdometer').value) || 0;
+    const miles = Math.max(0, endOdo - startOdo);
+    document.getElementById('milesDriven').textContent = miles.toFixed(1);
+}
+
+function addTrip() {
+    const date = document.getElementById('date').value;
+    const startLocation = document.getElementById('startLocation').value;
+    const destination = document.getElementById('destination').value;
+    const purpose = document.getElementById('purpose').value;
+    const startOdo = document.getElementById('startOdometer').value;
+    const endOdo = document.getElementById('endOdometer').value;
+    
+    if (!date || !startLocation || !destination || !purpose || !startOdo || !endOdo) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    const miles = (parseFloat(endOdo) - parseFloat(startOdo)).toFixed(1);
+    
+    if (miles <= 0) {
+        alert('Ending odometer reading must be greater than starting reading');
+        return;
+    }
+    
+    // Get existing data or initialize new array
+    let trips = [];
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        trips = JSON.parse(savedData);
+    }
+    
+    // Add new trip to array
+    trips.push({
+        date: date,
+        startLocation: startLocation,
+        destination: destination,
+        purpose: purpose,
+        startOdo: startOdo,
+        endOdo: endOdo,
+        miles: miles,
+        id: Date.now() // Unique ID for easier deletion
+    });
+    
+    // Save updated data
+    localStorage.setItem('mileageData', JSON.stringify(trips));
+    
+    // Clear input fields
+    document.getElementById('date').value = '';
+    document.getElementById('startLocation').value = '';
+    document.getElementById('destination').value = '';
+    document.getElementById('purpose').value = '';
+    document.getElementById('startOdometer').value = '';
+    document.getElementById('endOdometer').value = '';
+    document.getElementById('milesDriven').textContent = '0';
+    
+    // Hide form and update display
+    toggleTripForm();
+    renderTripsList();
+    updateSummary();
+}
+
+function deleteTrip(tripId) {
+    if (confirm('Are you sure you want to delete this trip?')) {
+        // Get current data
+        const savedData = localStorage.getItem('mileageData');
+        if (savedData) {
+            let trips = JSON.parse(savedData);
+            // Filter out the trip to delete
+            trips = trips.filter(trip => trip.id !== tripId);
             // Save updated data
             localStorage.setItem('mileageData', JSON.stringify(trips));
-            
-            // Clear input fields
-            document.getElementById('date').value = '';
-            document.getElementById('startLocation').value = '';
-            document.getElementById('destination').value = '';
-            document.getElementById('purpose').value = '';
-            document.getElementById('startOdometer').value = '';
-            document.getElementById('endOdometer').value = '';
-            document.getElementById('milesDriven').textContent = '0';
-            
-            // Hide form and update display
-            toggleTripForm();
+            // Refresh display
             renderTripsList();
             updateSummary();
         }
+    }
+}
+
+function renderTripsList() {
+    const tripsList = document.getElementById('tripsList');
+    tripsList.innerHTML = '';
+    
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        const trips = JSON.parse(savedData);
         
-        function deleteTrip(tripId) {
-            if (confirm('Are you sure you want to delete this trip?')) {
-                // Get current data
-                const savedData = localStorage.getItem('mileageData');
-                if (savedData) {
-                    let trips = JSON.parse(savedData);
-                    // Filter out the trip to delete
-                    trips = trips.filter(trip => trip.id !== tripId);
-                    // Save updated data
-                    localStorage.setItem('mileageData', JSON.stringify(trips));
-                    // Refresh display
-                    renderTripsList();
-                    updateSummary();
-                }
+        if (trips.length === 0) {
+            tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
+            return;
+        }
+        
+        // Sort trips by date (newest first)
+        trips.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        for (const trip of trips) {
+            const tripCard = document.createElement('div');
+            tripCard.className = 'card-view';
+            
+            // Format date for better display
+            const tripDate = new Date(trip.date);
+            const formattedDate = tripDate.toLocaleDateString();
+            
+            tripCard.innerHTML = `
+                <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
+                <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
+                <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
+                <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
+                <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
+                <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
+            `;
+            
+            tripsList.appendChild(tripCard);
+        }
+    } else {
+        tripsList.innerHTML = '<p style="text-align: center; color: #777;">No trips added yet. Use the form above to add your first trip.</p>';
+    }
+}
+
+function updateSummary() {
+    let totalMiles = 0;
+    
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        const trips = JSON.parse(savedData);
+        totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
+    }
+    
+    document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
+    
+    // Calculate tax deduction (using 2024 rate of 67 cents per mile)
+    const taxDeduction = totalMiles * 0.67;
+    document.getElementById('taxDeduction').textContent = taxDeduction.toFixed(2);
+}
+
+function exportToCSV() {
+    const savedData = localStorage.getItem('mileageData');
+    if (!savedData || JSON.parse(savedData).length === 0) {
+        alert('No data to export');
+        return;
+    }
+    
+    const trips = JSON.parse(savedData);
+    let csv = 'Date,Starting Location,Destination,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
+    
+    for (const trip of trips) {
+        const rowData = [
+            trip.date,
+            '"' + trip.startLocation + '"',
+            '"' + trip.destination + '"',
+            '"' + trip.purpose + '"',
+            trip.startOdo,
+            trip.endOdo,
+            trip.miles
+        ];
+        csv += rowData.join(',') + '\n';
+    }
+    
+    const totalMiles = document.getElementById('totalMiles').textContent;
+    const taxDeduction = document.getElementById('taxDeduction').textContent;
+    csv += '\nTotal Miles,' + totalMiles + '\nEstimated Tax Deduction,$' + taxDeduction;
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'mileage_tracker_' + new Date().toISOString().split('T')[0] + '.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function clearAll() {
+    if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+        localStorage.removeItem('mileageData');
+        renderTripsList();
+        updateSummary();
+    }
+}
+
+function loadSavedData() {
+    // Just load the data, rendering happens separately
+    const savedData = localStorage.getItem('mileageData');
+    if (savedData) {
+        // Add IDs to older entries if they don't have them
+        const trips = JSON.parse(savedData);
+        let needsUpdate = false;
+        
+        for (let i = 0; i < trips.length; i++) {
+            if (!trips[i].id) {
+                trips[i].id = Date.now() + i;
+                needsUpdate = true;
             }
         }
         
-        function renderTripsList() {
-            const tripsList = document.getElementById('tripsList');
-            tripsList.innerHTML = '';
-            
-            const savedData = localStorage.getItem('mileageData');
-            if (savedData) {
-                const trips = JSON.parse(savedData);
-                
-                // Sort trips by date (newest first)
-                trips.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                for (const trip of trips) {
-                    const tripCard = document.createElement('div');
-                    tripCard.className = 'card-view';
-                    
-                    // Format date for better display
-                    const tripDate = new Date(trip.date);
-                    const formattedDate = tripDate.toLocaleDateString();
-                    
-                    tripCard.innerHTML = `
-                        <div><span class="label">Date:</span> <span class="value">${formattedDate}</span></div>
-                        <div><span class="label">From:</span> <span class="value">${trip.startLocation}</span></div>
-                        <div><span class="label">To:</span> <span class="value">${trip.destination}</span></div>
-                        <div><span class="label">Purpose:</span> <span class="value">${trip.purpose}</span></div>
-                        <div><span class="label">Miles:</span> <span class="value">${trip.miles}</span></div>
-                        <button class="delete-btn" onclick="deleteTrip(${trip.id})">Delete</button>
-                    `;
-                    
-                    tripsList.appendChild(tripCard);
-                }
-            }
+        if (needsUpdate) {
+            localStorage.setItem('mileageData', JSON.stringify(trips));
         }
-        
-        function updateSummary() {
-            let totalMiles = 0;
-            
-            const savedData = localStorage.getItem('mileageData');
-            if (savedData) {
-                const trips = JSON.parse(savedData);
-                totalMiles = trips.reduce((sum, trip) => sum + parseFloat(trip.miles), 0);
-            }
-            
-            document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
-            
-            // Calculate tax deduction (using 2024 rate of 67 cents per mile)
-            const taxDeduction = totalMiles * 0.67;
-            document.getElementById('taxDeduction').textContent = taxDeduction.toFixed(2);
-        }
-        
-        function exportToCSV() {
-            const savedData = localStorage.getItem('mileageData');
-            if (!savedData || JSON.parse(savedData).length === 0) {
-                alert('No data to export');
-                return;
-            }
-            
-            const trips = JSON.parse(savedData);
-            let csv = 'Date,Starting Location,Destination,Business Purpose,Starting Odometer,Ending Odometer,Miles Driven\n';
-            
-            for (const trip of trips) {
-                const rowData = [
-                    trip.date,
-                    '"' + trip.startLocation + '"',
-                    '"' + trip.destination + '"',
-                    '"' + trip.purpose + '"',
-                    trip.startOdo,
-                    trip.endOdo,
-                    trip.miles
-                ];
-                csv += rowData.join(',') + '\n';
-            }
-            
-            const totalMiles = document.getElementById('totalMiles').textContent;
-            const taxDeduction = document.getElementById('taxDeduction').textContent;
-            csv += '\nTotal Miles,' + totalMiles + '\nEstimated Tax Deduction,
-    </script>
-</body>
-</html> + taxDeduction;
-            
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'mileage_tracker_' + new Date().toISOString().split('T')[0] + '.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        
-        function clearAll() {
-            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-                localStorage.removeItem('mileageData');
-                renderTripsList();
-                updateSummary();
-            }
-        }
-        
-        function loadSavedData() {
-            // Just load the data, rendering happens separately
-            const savedData = localStorage.getItem('mileageData');
-            if (savedData) {
-                // Add IDs to older entries if they don't have them
-                const trips = JSON.parse(savedData);
-                let needsUpdate = false;
-                
-                for (let i = 0; i < trips.length; i++) {
-                    if (!trips[i].id) {
-                        trips[i].id = Date.now() + i;
-                        needsUpdate = true;
-                    }
-                }
-                
-                if (needsUpdate) {
-                    localStorage.setItem('mileageData', JSON.stringify(trips));
-                }
-            }
-        }
-    </script>
+    }
+}
+</script>
 </body>
 </html>
