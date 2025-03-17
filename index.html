@@ -380,8 +380,7 @@
             <div class="form-group">
                 <label for="startLocation">Starting Location:</label>
                 <div class="quick-location-buttons">
-                    <span class="location-chip" data-location="Home">Home</span>
-                    <span class="location-chip" data-location="Office">Office</span>
+                    <span class="location-chip" data-location="Home Office">Home Office</span>
                 </div>
                 <input type="text" id="startLocation" placeholder="Home, Office, etc.">
             </div>
@@ -390,7 +389,6 @@
                 <label for="destination">Destination:</label>
                 <div class="quick-location-buttons" id="frequentDestinations">
                     <span class="location-chip" data-location="Client Site">Client Site</span>
-                    <span class="location-chip" data-location="Downtown">Downtown</span>
                 </div>
                 <input type="text" id="destination" placeholder="Client site, Meeting, etc.">
             </div>
@@ -402,15 +400,24 @@
                     <option value="Client Meeting">Client Meeting</option>
                     <option value="Site Visit">Site Visit</option>
                     <option value="Business Errand">Business Errand</option>
-                    <option value="Conference">Conference</option>
-                    <option value="Training">Training</option>
                     <option value="Other">Other</option>
                 </select>
+            </div>
+            
+            <div class="form-group" id="otherPurposeGroup" style="display:none;">
+                <label for="otherPurpose">Please specify:</label>
+                <input type="text" id="otherPurpose" placeholder="Describe business purpose">
             </div>
             
             <div class="form-group">
                 <label for="startOdometer">Starting Odometer:</label>
                 <input type="number" id="startOdometer" placeholder="Starting miles">
+            </div>
+            
+            <div class="form-group">
+                <label for="milesTraveled">Miles Traveled:</label>
+                <input type="number" id="milesTraveled" placeholder="Enter miles for this trip">
+                <button id="calculateEndBtn" class="btn btn-neutral" style="margin-top: 8px; font-size: 0.9rem; padding: 8px;">Calculate Ending Odometer</button>
             </div>
             
             <div class="form-group">
@@ -503,6 +510,36 @@
                 });
             });
             
+            // Show/hide other purpose field
+            document.getElementById('purpose').addEventListener('change', function() {
+                const otherPurposeGroup = document.getElementById('otherPurposeGroup');
+                if (this.value === 'Other') {
+                    otherPurposeGroup.style.display = 'block';
+                } else {
+                    otherPurposeGroup.style.display = 'none';
+                    document.getElementById('otherPurpose').value = '';
+                }
+            });
+            
+            // Calculate ending odometer based on miles traveled
+            document.getElementById('calculateEndBtn').addEventListener('click', function() {
+                const startOdo = parseFloat(document.getElementById('startOdometer').value);
+                const milesTraveled = parseFloat(document.getElementById('milesTraveled').value);
+                
+                if (isNaN(startOdo)) {
+                    alert('Please enter a valid starting odometer reading first');
+                    return;
+                }
+                
+                if (isNaN(milesTraveled) || milesTraveled <= 0) {
+                    alert('Please enter a valid number of miles traveled');
+                    return;
+                }
+                
+                const endOdo = startOdo + milesTraveled;
+                document.getElementById('endOdometer').value = endOdo;
+            });
+            
             // Save settings
             saveSettings.addEventListener('click', function() {
                 const defaultStart = document.getElementById('defaultStart').value;
@@ -580,6 +617,17 @@
                 const startOdo = document.getElementById('startOdometer').value;
                 const endOdo = document.getElementById('endOdometer').value;
                 
+                // Check for other purpose
+                let detailedPurpose = purpose;
+                if (purpose === 'Other') {
+                    const otherPurpose = document.getElementById('otherPurpose').value;
+                    if (!otherPurpose) {
+                        alert('Please provide details for "Other" business purpose');
+                        return;
+                    }
+                    detailedPurpose = 'Other: ' + otherPurpose;
+                }
+                
                 if (!date || !startLoc || !dest || !purpose || !startOdo || !endOdo) {
                     alert('Please fill in all required fields');
                     return;
@@ -597,7 +645,7 @@
                     date: date,
                     startLocation: startLoc,
                     destination: dest,
-                    purpose: purpose,
+                    purpose: detailedPurpose,
                     startOdometer: parseFloat(startOdo),
                     endOdometer: parseFloat(endOdo),
                     miles: miles,
