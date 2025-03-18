@@ -420,8 +420,18 @@
         </div>
     </div>
     
-    <!-- Floating Action Button -->
-    <div class="fab-button" id="addTripFab">+</div>
+    <!-- Trip Type Dialog -->
+    <div id="tripTypeDialog" class="card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 85%; max-width: 350px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
+        <h3>Trip Type</h3>
+        <p>Is this a continuation of your previous trip?</p>
+        <div class="btn-group">
+            <button id="continuousTripBtn" class="btn btn-secondary">Yes, Continuous</button>
+            <button id="newTripBtn" class="btn">No, New Trip</button>
+        </div>
+    </div>
+    
+    <!-- Overlay for modal background -->
+    <div id="modalOverlay" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 999;"></div>
     
     <script>
         // Wait for DOM to be fully loaded
@@ -437,6 +447,10 @@
             const tabContents = document.querySelectorAll('.tab-content');
             const locationChips = document.querySelectorAll('.location-chip');
             const saveSettings = document.getElementById('saveSettings');
+            const tripTypeDialog = document.getElementById('tripTypeDialog');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const continuousTripBtn = document.getElementById('continuousTripBtn');
+            const newTripBtn = document.getElementById('newTripBtn');
             
             // Tab functionality
             tabs.forEach(tab => {
@@ -459,24 +473,85 @@
             // Add Trip button
             addTripFab.addEventListener('click', function() {
                 console.log("Add Trip FAB clicked");
+                
+                // Check if there are previous trips
+                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
+                
+                if (trips.length > 0) {
+                    // Show trip type dialog
+                    tripTypeDialog.style.display = 'block';
+                    modalOverlay.style.display = 'block';
+                } else {
+                    // No previous trips, just show the form
+                    showNewTripForm();
+                }
+            });
+            
+            // Continuous trip button
+            continuousTripBtn.addEventListener('click', function() {
+                console.log("Continuous trip selected");
+                
+                // Hide dialog
+                tripTypeDialog.style.display = 'none';
+                modalOverlay.style.display = 'none';
+                
+                // Get the last trip
+                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
+                const lastTrip = trips[trips.length - 1];
+                
+                // Show form
                 tripForm.style.display = 'block';
+                
+                // Pre-fill form with continuous trip data
+                document.getElementById('startLocation').value = lastTrip.destination;
+                document.getElementById('startOdometer').value = lastTrip.endOdometer;
                 
                 // Scroll to form
                 tripForm.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // New trip button
+            newTripBtn.addEventListener('click', function() {
+                console.log("New trip selected");
                 
-                // Pre-fill start odometer if there are previous trips
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                if (trips.length > 0) {
-                    const lastTrip = trips[trips.length - 1];
-                    document.getElementById('startOdometer').value = lastTrip.endOdometer;
-                }
+                // Hide dialog
+                tripTypeDialog.style.display = 'none';
+                modalOverlay.style.display = 'none';
+                
+                // Show new trip form
+                showNewTripForm();
+            });
+            
+            // Function to show new trip form
+            function showNewTripForm() {
+                tripForm.style.display = 'block';
+                
+                // Clear form fields
+                document.getElementById('destination').value = '';
+                document.getElementById('purpose').value = '';
+                document.getElementById('milesTraveled').value = '';
+                document.getElementById('endOdometer').value = '';
                 
                 // Pre-fill default starting location if set
                 const defaultStart = localStorage.getItem('defaultStart');
                 if (defaultStart) {
                     document.getElementById('startLocation').value = defaultStart;
+                } else {
+                    document.getElementById('startLocation').value = '';
                 }
-            });
+                
+                // Pre-fill starting odometer if there are previous trips
+                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
+                if (trips.length > 0) {
+                    const lastTrip = trips[trips.length - 1];
+                    document.getElementById('startOdometer').value = lastTrip.endOdometer;
+                } else {
+                    document.getElementById('startOdometer').value = '';
+                }
+                
+                // Scroll to form
+                tripForm.scrollIntoView({ behavior: 'smooth' });
+            }
             
             // Cancel button
             cancelButton.addEventListener('click', function() {
