@@ -76,9 +76,15 @@
             cursor: pointer;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            -webkit-appearance: none;
+            border: none;
+            font-weight: bold;
+            line-height: 1;
         }
         
-        #add-trip-fab:active {
+        #add-trip-fab:active, 
+        #add-trip-fab:hover {
             background-color: #2980b9;
             transform: scale(0.95);
         }
@@ -462,7 +468,7 @@
     </div>
     
     <!-- Floating Action Button - Fixed at bottom right -->
-    <div id="add-trip-fab">+</div>
+    <button id="add-trip-fab" type="button" aria-label="Add new trip">+</button>
     
     <!-- Trip Type Dialog -->
     <div id="trip-type-dialog" class="modal">
