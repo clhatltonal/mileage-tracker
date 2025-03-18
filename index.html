@@ -18,6 +18,7 @@
             max-width: 100%;
             padding: 15px;
             margin: 0 auto;
+            padding-bottom: 80px; /* Space for FAB */
         }
         
         h1 {
@@ -56,7 +57,8 @@
             background-color: #2980b9;
         }
         
-        .fab-button {
+        /* FAB Button */
+        #add-trip-fab {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -65,18 +67,18 @@
             border-radius: 50%;
             background-color: #3498db;
             color: white;
-            font-size: 32px;
+            font-size: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            z-index: 100;
+            z-index: 1000;
             cursor: pointer;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
         
-        .fab-button:active {
+        #add-trip-fab:active {
             background-color: #2980b9;
             transform: scale(0.95);
         }
@@ -286,6 +288,37 @@
             margin-bottom: 10px;
         }
         
+        /* Modal dialog */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+        }
+        
+        .modal-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 85%;
+            max-width: 350px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        
         @media (min-width: 768px) {
             .container {
                 max-width: 600px;
@@ -390,14 +423,14 @@
                 <div class="quick-location-buttons">
                     <span class="location-chip" data-location="Home Office">Home Office</span>
                 </div>
-                <input type="text" id="startLocation" placeholder="Home, Office, etc.">
+                <input type="text" id="startLocation" placeholder="">
             </div>
             
             <div class="form-group">
                 <label for="destination">Destination:</label>
                 <div class="quick-location-buttons" id="frequentDestinations">
                 </div>
-                <input type="text" id="destination" placeholder="Client site, Meeting, etc.">
+                <input type="text" id="destination" placeholder="">
             </div>
             
             <div class="form-group">
@@ -428,18 +461,21 @@
         </div>
     </div>
     
+    <!-- Floating Action Button - Fixed at bottom right -->
+    <div id="add-trip-fab">+</div>
+    
     <!-- Trip Type Dialog -->
-    <div id="tripTypeDialog" class="card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 85%; max-width: 350px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
-        <h3>Trip Type</h3>
-        <p>Is this a continuation of your previous trip?</p>
-        <div class="btn-group">
-            <button id="continuousTripBtn" class="btn btn-secondary">Yes, Continuous</button>
-            <button id="newTripBtn" class="btn">No, New Trip</button>
+    <div id="trip-type-dialog" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h3>Trip Type</h3>
+            <p>Is this a continuation of your previous trip?</p>
+            <div class="btn-group">
+                <button id="continuous-trip-btn" class="btn btn-secondary">Yes, Continuous</button>
+                <button id="new-trip-btn" class="btn">No, New Trip</button>
+            </div>
         </div>
     </div>
-    
-    <!-- Overlay for modal background -->
-    <div id="modalOverlay" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 999;"></div>
     
     <script>
         // Wait for DOM to be fully loaded
@@ -447,18 +483,21 @@
             console.log("DOM fully loaded - attaching event listeners");
             
             // Get elements
-            const addTripFab = document.getElementById('addTripFab');
+            const addTripFab = document.getElementById('add-trip-fab');
             const tripForm = document.getElementById('tripForm');
+            const tripTypeDialog = document.getElementById('trip-type-dialog');
+            const continuousTripBtn = document.getElementById('continuous-trip-btn');
+            const newTripBtn = document.getElementById('new-trip-btn');
             const cancelButton = document.getElementById('cancelButton');
             const saveButton = document.getElementById('saveButton');
+            const calculateEndBtn = document.getElementById('calculateEndBtn');
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
             const locationChips = document.querySelectorAll('.location-chip');
             const saveSettings = document.getElementById('saveSettings');
-            const tripTypeDialog = document.getElementById('tripTypeDialog');
-            const modalOverlay = document.getElementById('modalOverlay');
-            const continuousTripBtn = document.getElementById('continuousTripBtn');
-            const newTripBtn = document.getElementById('newTripBtn');
+            
+            // Set today's date
+            document.getElementById('date').valueAsDate = new Date();
             
             // Tab functionality
             tabs.forEach(tab => {
@@ -475,10 +514,7 @@
                 });
             });
             
-            // Set today's date
-            document.getElementById('date').valueAsDate = new Date();
-            
-            // Add Trip button
+            // Add Trip FAB button
             addTripFab.addEventListener('click', function() {
                 console.log("Add Trip FAB clicked");
                 
@@ -488,7 +524,6 @@
                 if (trips.length > 0) {
                     // Show trip type dialog
                     tripTypeDialog.style.display = 'block';
-                    modalOverlay.style.display = 'block';
                 } else {
                     // No previous trips, just show the form
                     showNewTripForm();
@@ -501,7 +536,6 @@
                 
                 // Hide dialog
                 tripTypeDialog.style.display = 'none';
-                modalOverlay.style.display = 'none';
                 
                 // Get the last trip
                 const trips = JSON.parse(localStorage.getItem('trips') || '[]');
@@ -524,7 +558,6 @@
                 
                 // Hide dialog
                 tripTypeDialog.style.display = 'none';
-                modalOverlay.style.display = 'none';
                 
                 // Show new trip form
                 showNewTripForm();
@@ -582,7 +615,7 @@
             });
             
             // Calculate ending odometer based on miles traveled
-            document.getElementById('calculateEndBtn').addEventListener('click', function() {
+            calculateEndBtn.addEventListener('click', function() {
                 const startOdo = parseFloat(document.getElementById('startOdometer').value);
                 const milesTraveled = parseFloat(document.getElementById('milesTraveled').value);
                 
@@ -642,26 +675,6 @@
                             container.appendChild(chip);
                         }
                     });
-                }
-            }
-            
-            // Load settings
-            function loadSettings() {
-                const defaultStart = localStorage.getItem('defaultStart');
-                const frequentDest = localStorage.getItem('frequentDest');
-                const autoCalc = localStorage.getItem('autoCalc');
-                
-                if (defaultStart) {
-                    document.getElementById('defaultStart').value = defaultStart;
-                }
-                
-                if (frequentDest) {
-                    document.getElementById('frequentDest').value = frequentDest;
-                    updateFrequentDestinations();
-                }
-                
-                if (autoCalc !== null) {
-                    document.getElementById('autoCalc').checked = autoCalc === 'true';
                 }
             }
             
@@ -857,7 +870,23 @@
             loadSettings();
             updateSummary();
             updateTripHistory();
-        });
-    </script>
-</body>
-</html>
+            
+            // Load settings function
+            function loadSettings() {
+                const defaultStart = localStorage.getItem('defaultStart');
+                const frequentDest = localStorage.getItem('frequentDest');
+                const autoCalc = localStorage.getItem('autoCalc');
+                
+                if (defaultStart) {
+                    document.getElementById('defaultStart').value = defaultStart;
+                }
+                
+                if (frequentDest) {
+                    document.getElementById('frequentDest').value = frequentDest;
+                    updateFrequentDestinations();
+                }
+                
+                if (autoCalc !== null) {
+                    document.getElementById('autoCalc').checked = autoCalc === 'true';
+                }
+            }
