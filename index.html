@@ -395,18 +395,7 @@
             
             <div class="form-group">
                 <label for="purpose">Business Purpose:</label>
-                <select id="purpose">
-                    <option value="">-- Select Purpose --</option>
-                    <option value="Client Meeting">Client Meeting</option>
-                    <option value="Site Visit">Site Visit</option>
-                    <option value="Business Errand">Business Errand</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            
-            <div class="form-group" id="otherPurposeGroup" style="display:none;">
-                <label for="otherPurpose">Please specify:</label>
-                <input type="text" id="otherPurpose" placeholder="Describe business purpose">
+                <input type="text" id="purpose" placeholder="Client Meeting, Site Visit, etc.">
             </div>
             
             <div class="form-group">
@@ -510,17 +499,6 @@
                 });
             });
             
-            // Show/hide other purpose field
-            document.getElementById('purpose').addEventListener('change', function() {
-                const otherPurposeGroup = document.getElementById('otherPurposeGroup');
-                if (this.value === 'Other') {
-                    otherPurposeGroup.style.display = 'block';
-                } else {
-                    otherPurposeGroup.style.display = 'none';
-                    document.getElementById('otherPurpose').value = '';
-                }
-            });
-            
             // Calculate ending odometer based on miles traveled
             document.getElementById('calculateEndBtn').addEventListener('click', function() {
                 const startOdo = parseFloat(document.getElementById('startOdometer').value);
@@ -617,17 +595,6 @@
                 const startOdo = document.getElementById('startOdometer').value;
                 const endOdo = document.getElementById('endOdometer').value;
                 
-                // Check for other purpose
-                let detailedPurpose = purpose;
-                if (purpose === 'Other') {
-                    const otherPurpose = document.getElementById('otherPurpose').value;
-                    if (!otherPurpose) {
-                        alert('Please provide details for "Other" business purpose');
-                        return;
-                    }
-                    detailedPurpose = 'Other: ' + otherPurpose;
-                }
-                
                 if (!date || !startLoc || !dest || !purpose || !startOdo || !endOdo) {
                     alert('Please fill in all required fields');
                     return;
@@ -645,7 +612,7 @@
                     date: date,
                     startLocation: startLoc,
                     destination: dest,
-                    purpose: detailedPurpose,
+                    purpose: purpose,
                     startOdometer: parseFloat(startOdo),
                     endOdometer: parseFloat(endOdo),
                     miles: miles,
