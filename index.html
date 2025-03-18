@@ -65,12 +65,20 @@
             border-radius: 50%;
             background-color: #3498db;
             color: white;
-            font-size: 24px;
+            font-size: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             z-index: 100;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .fab-button:active {
+            background-color: #2980b9;
+            transform: scale(0.95);
         }
         
         .card {
