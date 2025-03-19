@@ -468,7 +468,7 @@
     </div>
     
     <!-- Floating Action Button - Fixed at bottom right -->
-    <button id="add-trip-fab" type="button" aria-label="Add new trip">+</button>
+    <button id="add-trip-fab" type="button" aria-label="Add new trip" onclick="document.getElementById('tripForm').style.display = 'block'; document.getElementById('tripForm').scrollIntoView({behavior: 'smooth'})">+</button>
     
     <!-- Trip Type Dialog -->
     <div id="trip-type-dialog" class="modal">
@@ -483,6 +483,33 @@
         </div>
     </div>
     
+    <script>
+        // Initialize FAB button functionality
+        window.onload = function() {
+            console.log("Window loaded - ensuring FAB is functional");
+            var addButton = document.getElementById('add-trip-fab');
+            if (addButton) {
+                addButton.onclick = function() {
+                    console.log("FAB clicked from window.onload handler");
+                    var tripForm = document.getElementById('tripForm');
+                    if (tripForm) {
+                        if (tripForm.style.display === 'none' || tripForm.style.display === '') {
+                            tripForm.style.display = 'block';
+                            tripForm.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                            tripForm.style.display = 'none';
+                        }
+                    } else {
+                        console.error("Could not find tripForm element");
+                    }
+                };
+            } else {
+                console.error("Could not find add-trip-fab element");
+            }
+        };
+    </script>
+    
+    <!-- Remainder of JavaScript -->
     <script>
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
