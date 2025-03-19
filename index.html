@@ -489,7 +489,6 @@
             console.log("DOM fully loaded - attaching event listeners");
             
             // Get elements
-            const addTripFab = document.getElementById('add-trip-fab');
             const tripForm = document.getElementById('tripForm');
             const tripTypeDialog = document.getElementById('trip-type-dialog');
             const continuousTripBtn = document.getElementById('continuous-trip-btn');
@@ -501,6 +500,9 @@
             const tabContents = document.querySelectorAll('.tab-content');
             const locationChips = document.querySelectorAll('.location-chip');
             const saveSettings = document.getElementById('saveSettings');
+            const addTripFab = document.getElementById('add-trip-fab');
+            
+            console.log("Add Trip FAB Element:", addTripFab);
             
             // Set today's date
             document.getElementById('date').valueAsDate = new Date();
@@ -520,21 +522,41 @@
                 });
             });
             
-            // Add Trip FAB button
-            addTripFab.addEventListener('click', function() {
-                console.log("Add Trip FAB clicked");
+            // ** IMPORTANT: FAB Button Click Handler **
+            if (addTripFab) {
+                addTripFab.onclick = function() {
+                    console.log("Add Trip FAB clicked via onclick");
+                    
+                    // Check if there are previous trips
+                    const trips = JSON.parse(localStorage.getItem('trips') || '[]');
+                    
+                    if (trips.length > 0) {
+                        // Show trip type dialog
+                        tripTypeDialog.style.display = 'block';
+                    } else {
+                        // No previous trips, just show the form
+                        showNewTripForm();
+                    }
+                };
                 
-                // Check if there are previous trips
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                
-                if (trips.length > 0) {
-                    // Show trip type dialog
-                    tripTypeDialog.style.display = 'block';
-                } else {
-                    // No previous trips, just show the form
-                    showNewTripForm();
-                }
-            });
+                // Also add regular event listener as backup
+                addTripFab.addEventListener('click', function() {
+                    console.log("Add Trip FAB clicked via addEventListener");
+                    
+                    // Check if there are previous trips
+                    const trips = JSON.parse(localStorage.getItem('trips') || '[]');
+                    
+                    if (trips.length > 0) {
+                        // Show trip type dialog
+                        tripTypeDialog.style.display = 'block';
+                    } else {
+                        // No previous trips, just show the form
+                        showNewTripForm();
+                    }
+                });
+            } else {
+                console.error("ERROR: Could not find add-trip-fab element!");
+            }
             
             // Continuous trip button
             continuousTripBtn.addEventListener('click', function() {
