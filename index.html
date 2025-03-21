@@ -272,7 +272,7 @@
         }
         
         .hidden {
-            display: none;
+            display: none !important;
         }
         
         #tripHistory tr:nth-child(even) {
@@ -737,19 +737,42 @@
                 
                 // Reset trip form
                 function resetTripForm() {
+                    console.log("Resetting trip form");
+                    
+                    // Set form title
                     document.getElementById('tripFormTitle').textContent = 'Add New Trip';
-                    document.getElementById('tripDate').valueAsDate = new Date();
-                    document.getElementById('tripStartLocation').value = '';
-                    document.getElementById('tripDestination').value = '';
-                    document.getElementById('tripRoundTrip').value = 'false';
-                    document.getElementById('tripMiles').value = '';
-                    document.getElementById('tripPurpose').value = '';
-                    document.getElementById('tripNotes').value = '';
+                    
+                    // Set default date to today
+                    const dateField = document.getElementById('tripDate');
+                    if (dateField) {
+                        dateField.valueAsDate = new Date();
+                    }
+                    
+                    // Clear other form fields
+                    const fields = [
+                        'tripStartLocation', 
+                        'tripDestination', 
+                        'tripMiles',
+                        'tripPurpose',
+                        'tripNotes'
+                    ];
+                    
+                    fields.forEach(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        if (field) field.value = '';
+                    });
+                    
+                    // Reset dropdown
+                    const roundTrip = document.getElementById('tripRoundTrip');
+                    if (roundTrip) roundTrip.value = 'false';
                     
                     // Clear error messages
                     document.querySelectorAll('.error').forEach(el => el.textContent = '');
                     
+                    // Reset editing state
                     editingTripId = null;
+                    
+                    console.log("Form reset complete");
                 }
                 
                 // Validate trip form
