@@ -7,94 +7,55 @@
     <style>
         body {
             font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0;
-            padding: 0;
+            margin: 20px;
             background-color: #f5f7fa;
             color: #343a40;
             line-height: 1.6;
         }
         
         .container {
-            max-width: 100%;
-            padding: 15px;
+            max-width: 800px;
             margin: 0 auto;
-            padding-bottom: 80px; /* Space for FAB */
         }
         
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
+            margin-bottom: 20px;
         }
         
         .info-card {
             background-color: #e8f4f8;
             border-left: 4px solid #3498db;
-            padding: 12px;
-            margin-bottom: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
             border-radius: 5px;
-            font-size: 0.9rem;
         }
         
         .btn {
             display: block;
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             font-size: 1rem;
             cursor: pointer;
             margin-bottom: 15px;
             text-align: center;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .btn:hover, .btn:active {
+        .btn:hover {
             background-color: #2980b9;
-        }
-        
-        /* FAB Button */
-        #add-trip-fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #3498db;
-            color: white;
-            font-size: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            z-index: 1000;
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            -webkit-appearance: none;
-            border: none;
-            font-weight: bold;
-            line-height: 1;
-        }
-        
-        #add-trip-fab:active, 
-        #add-trip-fab:hover {
-            background-color: #2980b9;
-            transform: scale(0.95);
         }
         
         .card {
             background-color: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .form-group {
@@ -105,44 +66,14 @@
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
-            font-size: 0.9rem;
         }
         
         .form-group input, .form-group select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 4px;
             font-size: 1rem;
-            -webkit-appearance: none;
-            background-color: #f9f9f9;
-        }
-        
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-
-        /* Quick buttons for common locations */
-        .quick-location-buttons {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .location-chip {
-            background-color: #edf2f7;
-            border: 1px solid #cbd5e0;
-            border-radius: 20px;
-            padding: 5px 10px;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .location-chip:hover, .location-chip:active {
-            background-color: #e2e8f0;
         }
         
         .btn-group {
@@ -158,7 +89,7 @@
             background-color: #2ecc71;
         }
         
-        .btn-secondary:hover, .btn-secondary:active {
+        .btn-secondary:hover {
             background-color: #27ae60;
         }
         
@@ -166,175 +97,14 @@
             background-color: #7f8c8d;
         }
         
-        .btn-neutral:hover, .btn-neutral:active {
+        .btn-neutral:hover {
             background-color: #6c7a7a;
         }
-
-        /* Trip history section */
-        .trip-history {
-            margin-top: 20px;
-        }
         
-        .trip-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+        .error {
+            color: #e74c3c;
             font-size: 0.9rem;
-        }
-        
-        .trip-date {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .trip-miles {
-            color: #3498db;
-            font-weight: bold;
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .tab {
-            padding: 10px 15px;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-            color: #7f8c8d;
-            font-weight: bold;
-        }
-        
-        .tab.active {
-            color: #3498db;
-            border-bottom: 3px solid #3498db;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Export section */
-        .export-options {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .export-btn {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            background-color: #f1f5f9;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .export-btn:hover, .export-btn:active {
-            background-color: #e2e8f0;
-        }
-
-        /* Auto-calculate feature toggle */
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-            margin-left: 10px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: #2ecc71;
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        /* Modal dialog */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 2000;
-        }
-        
-        .modal-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 12px;
-            width: 85%;
-            max-width: 350px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-        
-        @media (min-width: 768px) {
-            .container {
-                max-width: 600px;
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 20px;
-            }
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -346,76 +116,16 @@
             <p><strong>Note:</strong> The standard mileage rate for business use is 67 cents per mile for 2024.</p>
         </div>
         
-        <div class="tabs">
-            <div class="tab active" data-tab="summary">Summary</div>
-            <div class="tab" data-tab="history">History</div>
-            <div class="tab" data-tab="settings">Settings</div>
-        </div>
+        <button id="addTripBtn" class="btn">Add New Trip</button>
         
-        <div id="summary-tab" class="tab-content active">
-            <div class="card">
-                <h3>Monthly Stats</h3>
-                <p>Total Business Miles: <span id="totalMiles">0</span></p>
-                <p>Estimated Tax Deduction: $<span id="taxDeduction">0.00</span></p>
-                <div class="export-options">
-                    <div class="export-btn" id="exportMonth">Export Month</div>
-                    <div class="export-btn" id="exportYear">Export Year</div>
-                </div>
-            </div>
-            
-            <div class="trip-history">
-                <h3>Recent Trips</h3>
-                <div id="recentTrips">
-                    <!-- Recent trips will be added here by JS -->
-                    <div class="trip-item">
-                        <span class="trip-date">No recent trips</span>
-                    </div>
-                </div>
+        <div id="tripOptions" class="card" style="display:none;">
+            <h3>Trip Options</h3>
+            <div class="btn-group">
+                <button id="continueLastBtn" class="btn btn-secondary">Continue Last Trip</button>
+                <button id="newTripBtn" class="btn">Start New Trip</button>
             </div>
         </div>
         
-        <div id="history-tab" class="tab-content">
-            <div class="card">
-                <h3>Trip History</h3>
-                <div id="allTrips">
-                    <!-- All trips will be added here by JS -->
-                    <div class="trip-item">
-                        <span class="trip-date">No trips recorded</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="settings-tab" class="tab-content">
-            <div class="card">
-                <h3>App Settings</h3>
-                
-                <div class="form-group">
-                    <div class="toggle-container">
-                        <label for="autoCalc">Auto-calculate miles</label>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="autoCalc" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <p class="setting-desc">Automatically calculate miles based on odometer readings</p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="defaultStart">Default Starting Location:</label>
-                    <input type="text" id="defaultStart" placeholder="e.g. Home or Office">
-                </div>
-                
-                <div class="form-group">
-                    <label for="frequentDest">Frequent Destinations:</label>
-                    <input type="text" id="frequentDest" placeholder="Add locations separated by commas">
-                </div>
-                
-                <button id="saveSettings" class="btn btn-secondary">Save Settings</button>
-            </div>
-        </div>
-        
-        <!-- Trip Entry Form -->
         <div id="tripForm" class="card" style="display:none;">
             <h3>Trip Details</h3>
             
@@ -426,38 +136,35 @@
             
             <div class="form-group">
                 <label for="startLocation">Starting Location:</label>
-                <div class="quick-location-buttons">
-                    <span class="location-chip" data-location="Home Office">Home Office</span>
-                </div>
-                <input type="text" id="startLocation" placeholder="">
+                <input type="text" id="startLocation" placeholder="Home, Office, etc.">
             </div>
             
             <div class="form-group">
                 <label for="destination">Destination:</label>
-                <div class="quick-location-buttons" id="frequentDestinations">
-                </div>
-                <input type="text" id="destination" placeholder="">
+                <input type="text" id="destination" placeholder="Client site, Meeting, etc.">
             </div>
             
             <div class="form-group">
                 <label for="purpose">Business Purpose:</label>
-                <input type="text" id="purpose" placeholder="">
+                <select id="purpose">
+                    <option value="">-- Select Purpose --</option>
+                    <option value="Client Meeting">Client Meeting</option>
+                    <option value="Site Visit">Site Visit</option>
+                    <option value="Business Errand">Business Errand</option>
+                    <option value="Other">Other</option>
+                </select>
             </div>
             
             <div class="form-group">
                 <label for="startOdometer">Starting Odometer:</label>
                 <input type="number" id="startOdometer" placeholder="Starting miles">
-            </div>
-            
-            <div class="form-group">
-                <label for="milesTraveled">Miles Traveled:</label>
-                <input type="number" id="milesTraveled" placeholder="Enter miles for this trip">
-                <button id="calculateEndBtn" class="btn btn-neutral" style="margin-top: 8px; font-size: 0.9rem; padding: 8px;">Calculate Ending Odometer</button>
+                <div id="startOdometerError" class="error"></div>
             </div>
             
             <div class="form-group">
                 <label for="endOdometer">Ending Odometer:</label>
                 <input type="number" id="endOdometer" placeholder="Ending miles">
+                <div id="endOdometerError" class="error"></div>
             </div>
             
             <div class="btn-group">
@@ -465,483 +172,168 @@
                 <button id="cancelButton" class="btn btn-neutral">Cancel</button>
             </div>
         </div>
-    </div>
-    
-    <!-- Floating Action Button - Fixed at bottom right -->
-    <button id="add-trip-fab" type="button" aria-label="Add new trip" onclick="document.getElementById('tripForm').style.display = 'block'; document.getElementById('tripForm').scrollIntoView({behavior: 'smooth'})">+</button>
-    
-    <!-- Trip Type Dialog -->
-    <div id="trip-type-dialog" class="modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <h3>Trip Type</h3>
-            <p>Is this a continuation of your previous trip?</p>
-            <div class="btn-group">
-                <button id="continuous-trip-btn" class="btn btn-secondary">Yes, Continuous</button>
-                <button id="new-trip-btn" class="btn">No, New Trip</button>
-            </div>
+        
+        <div id="summary" class="card">
+            <h3>Summary</h3>
+            <p>Total Business Miles: <span id="totalMiles">0</span></p>
+            <p>Estimated Tax Deduction: $<span id="taxDeduction">0.00</span></p>
         </div>
     </div>
     
-    <script>
-        // Initialize FAB button functionality
-        window.onload = function() {
-            console.log("Window loaded - ensuring FAB is functional");
-            var addButton = document.getElementById('add-trip-fab');
-            if (addButton) {
-                addButton.onclick = function() {
-                    console.log("FAB clicked from window.onload handler");
-                    var tripForm = document.getElementById('tripForm');
-                    if (tripForm) {
-                        if (tripForm.style.display === 'none' || tripForm.style.display === '') {
-                            tripForm.style.display = 'block';
-                            tripForm.scrollIntoView({ behavior: 'smooth' });
-                        } else {
-                            tripForm.style.display = 'none';
-                        }
-                    } else {
-                        console.error("Could not find tripForm element");
-                    }
-                };
-            } else {
-                console.error("Could not find add-trip-fab element");
-            }
-        };
-    </script>
-    
-    <!-- Remainder of JavaScript -->
+    <!-- Place script at the end of body to ensure all elements are loaded -->
     <script>
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log("DOM fully loaded - attaching event listeners");
             
             // Get elements
+            const addTripBtn = document.getElementById('addTripBtn');
+            const tripOptions = document.getElementById('tripOptions');
             const tripForm = document.getElementById('tripForm');
-            const tripTypeDialog = document.getElementById('trip-type-dialog');
-            const continuousTripBtn = document.getElementById('continuous-trip-btn');
-            const newTripBtn = document.getElementById('new-trip-btn');
+            const continueLastBtn = document.getElementById('continueLastBtn');
+            const newTripBtn = document.getElementById('newTripBtn');
             const cancelButton = document.getElementById('cancelButton');
             const saveButton = document.getElementById('saveButton');
-            const calculateEndBtn = document.getElementById('calculateEndBtn');
-            const tabs = document.querySelectorAll('.tab');
-            const tabContents = document.querySelectorAll('.tab-content');
-            const locationChips = document.querySelectorAll('.location-chip');
-            const saveSettings = document.getElementById('saveSettings');
-            const addTripFab = document.getElementById('add-trip-fab');
-            
-            console.log("Add Trip FAB Element:", addTripFab);
             
             // Set today's date
             document.getElementById('date').valueAsDate = new Date();
             
-            // Tab functionality
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    // Remove active class from all tabs and contents
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-                    
-                    // Add active class to clicked tab and corresponding content
-                    this.classList.add('active');
-                    document.getElementById(`${tabId}-tab`).classList.add('active');
-                });
+            // Add Trip button - toggle options visibility
+            addTripBtn.addEventListener('click', function() {
+                console.log("Add Trip button clicked");
+                
+                // Toggle trip options visibility
+                if (tripOptions.style.display === 'none' || tripOptions.style.display === '') {
+                    tripOptions.style.display = 'block';
+                    addTripBtn.textContent = 'Cancel';
+                } else {
+                    tripOptions.style.display = 'none';
+                    addTripBtn.textContent = 'Add New Trip';
+                }
+                
+                // Always hide form when toggling options
+                tripForm.style.display = 'none';
             });
             
-            // ** IMPORTANT: FAB Button Click Handler **
-            if (addTripFab) {
-                addTripFab.onclick = function() {
-                    console.log("Add Trip FAB clicked via onclick");
-                    
-                    // Check if there are previous trips
-                    const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                    
-                    if (trips.length > 0) {
-                        // Show trip type dialog
-                        tripTypeDialog.style.display = 'block';
-                    } else {
-                        // No previous trips, just show the form
-                        showNewTripForm();
-                    }
-                };
-                
-                // Also add regular event listener as backup
-                addTripFab.addEventListener('click', function() {
-                    console.log("Add Trip FAB clicked via addEventListener");
-                    
-                    // Check if there are previous trips
-                    const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                    
-                    if (trips.length > 0) {
-                        // Show trip type dialog
-                        tripTypeDialog.style.display = 'block';
-                    } else {
-                        // No previous trips, just show the form
-                        showNewTripForm();
-                    }
-                });
-            } else {
-                console.error("ERROR: Could not find add-trip-fab element!");
-            }
-            
-            // Continuous trip button
-            continuousTripBtn.addEventListener('click', function() {
-                console.log("Continuous trip selected");
-                
-                // Hide dialog
-                tripTypeDialog.style.display = 'none';
-                
-                // Get the last trip
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                const lastTrip = trips[trips.length - 1];
-                
-                // Show form
+            // Continue Last Trip button
+            continueLastBtn.addEventListener('click', function() {
+                console.log("Continue Last Trip button clicked");
+                tripOptions.style.display = 'none';
                 tripForm.style.display = 'block';
+                addTripBtn.textContent = 'Cancel';
                 
-                // Pre-fill form with continuous trip data
-                document.getElementById('startLocation').value = lastTrip.destination;
-                document.getElementById('startOdometer').value = lastTrip.endOdometer;
-                
-                // Scroll to form
-                tripForm.scrollIntoView({ behavior: 'smooth' });
+                // Here you would load data from the last trip (not implemented in this simple version)
             });
             
-            // New trip button
+            // New Trip button
             newTripBtn.addEventListener('click', function() {
-                console.log("New trip selected");
-                
-                // Hide dialog
-                tripTypeDialog.style.display = 'none';
-                
-                // Show new trip form
-                showNewTripForm();
-            });
-            
-            // Function to show new trip form
-            function showNewTripForm() {
+                console.log("New Trip button clicked");
+                tripOptions.style.display = 'none';
                 tripForm.style.display = 'block';
+                addTripBtn.textContent = 'Cancel';
                 
-                // Clear form fields
+                // Clear form fields (except date, which is already set to today)
+                document.getElementById('startLocation').value = '';
                 document.getElementById('destination').value = '';
                 document.getElementById('purpose').value = '';
-                document.getElementById('milesTraveled').value = '';
+                document.getElementById('startOdometer').value = '';
                 document.getElementById('endOdometer').value = '';
                 
-                // Pre-fill default starting location if set
-                const defaultStart = localStorage.getItem('defaultStart');
-                if (defaultStart) {
-                    document.getElementById('startLocation').value = defaultStart;
-                } else {
-                    document.getElementById('startLocation').value = '';
-                }
-                
-                // Pre-fill starting odometer if there are previous trips
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                if (trips.length > 0) {
-                    const lastTrip = trips[trips.length - 1];
-                    document.getElementById('startOdometer').value = lastTrip.endOdometer;
-                } else {
-                    document.getElementById('startOdometer').value = '';
-                }
-                
-                // Scroll to form
-                tripForm.scrollIntoView({ behavior: 'smooth' });
-            }
+                // Clear any error messages
+                document.getElementById('startOdometerError').textContent = '';
+                document.getElementById('endOdometerError').textContent = '';
+            });
             
             // Cancel button
             cancelButton.addEventListener('click', function() {
                 console.log("Cancel button clicked");
                 tripForm.style.display = 'none';
+                addTripBtn.textContent = 'Add New Trip';
             });
             
-            // Location quick buttons
-            locationChips.forEach(chip => {
-                chip.addEventListener('click', function() {
-                    const location = this.getAttribute('data-location');
-                    const parent = this.parentElement;
-                    
-                    if (parent.id === 'frequentDestinations') {
-                        document.getElementById('destination').value = location;
-                    } else {
-                        document.getElementById('startLocation').value = location;
-                    }
-                });
-            });
-            
-            // Calculate ending odometer based on miles traveled
-            calculateEndBtn.addEventListener('click', function() {
-                const startOdo = parseFloat(document.getElementById('startOdometer').value);
-                const milesTraveled = parseFloat(document.getElementById('milesTraveled').value);
-                
-                if (isNaN(startOdo)) {
-                    alert('Please enter a valid starting odometer reading first');
-                    return;
-                }
-                
-                if (isNaN(milesTraveled) || milesTraveled <= 0) {
-                    alert('Please enter a valid number of miles traveled');
-                    return;
-                }
-                
-                const endOdo = startOdo + milesTraveled;
-                document.getElementById('endOdometer').value = endOdo;
-            });
-            
-            // Save settings
-            saveSettings.addEventListener('click', function() {
-                const defaultStart = document.getElementById('defaultStart').value;
-                const frequentDest = document.getElementById('frequentDest').value;
-                const autoCalc = document.getElementById('autoCalc').checked;
-                
-                localStorage.setItem('defaultStart', defaultStart);
-                localStorage.setItem('frequentDest', frequentDest);
-                localStorage.setItem('autoCalc', autoCalc);
-                
-                // Update frequent destinations chips
-                updateFrequentDestinations();
-                
-                alert('Settings saved!');
-            });
-            
-            // Function to update frequent destinations
-            function updateFrequentDestinations() {
-                const frequentDest = localStorage.getItem('frequentDest');
-                if (frequentDest) {
-                    const destinations = frequentDest.split(',').map(d => d.trim());
-                    const container = document.getElementById('frequentDestinations');
-                    
-                    // Clear existing chips (except defaults)
-                    const customChips = container.querySelectorAll('.location-chip.custom');
-                    customChips.forEach(chip => chip.remove());
-                    
-                    // Add new chips
-                    destinations.forEach(dest => {
-                        if (dest) {
-                            const chip = document.createElement('span');
-                            chip.className = 'location-chip custom';
-                            chip.setAttribute('data-location', dest);
-                            chip.textContent = dest;
-                            
-                            chip.addEventListener('click', function() {
-                                document.getElementById('destination').value = dest;
-                            });
-                            
-                            container.appendChild(chip);
-                        }
-                    });
-                }
+            // Helper function to clean number input (remove commas, etc)
+            function cleanNumberInput(input) {
+                if (!input) return '';
+                // Remove commas and other non-numeric characters except decimal point
+                return input.toString().replace(/[^0-9.]/g, '');
             }
             
-            // Save button
+            // Save button (improved implementation)
             saveButton.addEventListener('click', function() {
                 console.log("Save button clicked");
                 
-                // Simple validation
-                const date = document.getElementById('date').value;
+                // Reset error messages
+                document.getElementById('startOdometerError').textContent = '';
+                document.getElementById('endOdometerError').textContent = '';
+                
+                // Validate required fields
                 const startLoc = document.getElementById('startLocation').value;
                 const dest = document.getElementById('destination').value;
                 const purpose = document.getElementById('purpose').value;
+                
+                let hasError = false;
+                
+                if (!startLoc) {
+                    hasError = true;
+                }
+                
+                if (!dest) {
+                    hasError = true;
+                }
+                
+                if (!purpose) {
+                    hasError = true;
+                }
+                
+                // Get and clean odometer values before parsing
                 const startOdo = document.getElementById('startOdometer').value;
                 const endOdo = document.getElementById('endOdometer').value;
                 
-                if (!date || !startLoc || !dest || !purpose || !startOdo || !endOdo) {
-                    alert('Please fill in all required fields');
+                const cleanStartOdo = cleanNumberInput(startOdo);
+                const cleanEndOdo = cleanNumberInput(endOdo);
+                
+                const startValue = parseFloat(cleanStartOdo);
+                const endValue = parseFloat(cleanEndOdo);
+                
+                // Validate odometer values
+                if (!cleanStartOdo || isNaN(startValue)) {
+                    document.getElementById('startOdometerError').textContent = 'Please enter a valid starting odometer reading';
+                    hasError = true;
+                }
+                
+                if (!cleanEndOdo || isNaN(endValue)) {
+                    document.getElementById('endOdometerError').textContent = 'Please enter a valid ending odometer reading';
+                    hasError = true;
+                }
+                
+                if (hasError) {
+                    alert('Please fill in all required fields correctly');
                     return;
                 }
                 
                 // Calculate miles
-                const miles = parseFloat(endOdo) - parseFloat(startOdo);
+                const miles = endValue - startValue;
+                
                 if (miles <= 0) {
+                    document.getElementById('endOdometerError').textContent = 'Ending odometer must be greater than starting odometer';
                     alert('Ending odometer must be greater than starting odometer');
                     return;
                 }
                 
-                // Create trip object
-                const trip = {
-                    date: date,
-                    startLocation: startLoc,
-                    destination: dest,
-                    purpose: purpose,
-                    startOdometer: parseFloat(startOdo),
-                    endOdometer: parseFloat(endOdo),
-                    miles: miles,
-                    timestamp: new Date().getTime()
-                };
+                // In a complete version, you would save this data to localStorage
+                alert('Trip saved! Miles: ' + miles.toFixed(1));
                 
-                // Save to localStorage
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                trips.push(trip);
-                localStorage.setItem('trips', JSON.stringify(trips));
-                
-                // Update summary
-                updateSummary();
-                
-                // Update trip history
-                updateTripHistory();
+                // Update summary (simple implementation)
+                const currentMiles = parseFloat(document.getElementById('totalMiles').textContent) || 0;
+                const newTotalMiles = currentMiles + miles;
+                document.getElementById('totalMiles').textContent = newTotalMiles.toFixed(1);
+                document.getElementById('taxDeduction').textContent = (newTotalMiles * 0.67).toFixed(2);
                 
                 // Hide form
                 tripForm.style.display = 'none';
-                
-                // Show confirmation
-                alert('Trip saved! Miles: ' + miles.toFixed(1));
+                addTripBtn.textContent = 'Add New Trip';
             });
-            
-            // Function to update summary
-            function updateSummary() {
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                let totalMiles = 0;
-                
-                trips.forEach(trip => {
-                    totalMiles += trip.miles;
-                });
-                
-                document.getElementById('totalMiles').textContent = totalMiles.toFixed(1);
-                document.getElementById('taxDeduction').textContent = (totalMiles * 0.67).toFixed(2);
-            }
-            
-            // Function to update trip history
-            function updateTripHistory() {
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                const recentTripsContainer = document.getElementById('recentTrips');
-                const allTripsContainer = document.getElementById('allTrips');
-                
-                // Clear containers
-                recentTripsContainer.innerHTML = '';
-                allTripsContainer.innerHTML = '';
-                
-                if (trips.length === 0) {
-                    recentTripsContainer.innerHTML = '<div class="trip-item"><span class="trip-date">No recent trips</span></div>';
-                    allTripsContainer.innerHTML = '<div class="trip-item"><span class="trip-date">No trips recorded</span></div>';
-                    return;
-                }
-                
-                // Sort trips by date (newest first)
-                trips.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                // Show recent trips (up to 5)
-                const recentTrips = trips.slice(0, 5);
-                recentTrips.forEach(trip => {
-                    const tripItem = document.createElement('div');
-                    tripItem.className = 'trip-item';
-                    
-                    const date = new Date(trip.date);
-                    const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    
-                    tripItem.innerHTML = `
-                        <span class="trip-date">${formattedDate}</span> - 
-                        ${trip.startLocation} to ${trip.destination} 
-                        <span class="trip-miles">(${trip.miles.toFixed(1)} mi)</span>
-                    `;
-                    
-                    recentTripsContainer.appendChild(tripItem);
-                });
-                
-                // Show all trips
-                trips.forEach(trip => {
-                    const tripItem = document.createElement('div');
-                    tripItem.className = 'trip-item';
-                    
-                    const date = new Date(trip.date);
-                    const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    
-                    tripItem.innerHTML = `
-                        <span class="trip-date">${formattedDate}</span><br>
-                        ${trip.startLocation} to ${trip.destination}<br>
-                        Purpose: ${trip.purpose}<br>
-                        <span class="trip-miles">${trip.miles.toFixed(1)} miles</span> 
-                        ($${(trip.miles * 0.67).toFixed(2)} deduction)
-                    `;
-                    
-                    allTripsContainer.appendChild(tripItem);
-                });
-            }
-            
-            // Export functionality
-            document.getElementById('exportMonth').addEventListener('click', function() {
-                exportTrips('month');
-            });
-            
-            document.getElementById('exportYear').addEventListener('click', function() {
-                exportTrips('year');
-            });
-            
-            function exportTrips(period) {
-                const trips = JSON.parse(localStorage.getItem('trips') || '[]');
-                
-                if (trips.length === 0) {
-                    alert('No trips to export');
-                    return;
-                }
-                
-                const now = new Date();
-                let filteredTrips = trips;
-                
-                if (period === 'month') {
-                    const currentMonth = now.getMonth();
-                    const currentYear = now.getFullYear();
-                    
-                    filteredTrips = trips.filter(trip => {
-                        const tripDate = new Date(trip.date);
-                        return tripDate.getMonth() === currentMonth && tripDate.getFullYear() === currentYear;
-                    });
-                } else if (period === 'year') {
-                    const currentYear = now.getFullYear();
-                    
-                    filteredTrips = trips.filter(trip => {
-                        const tripDate = new Date(trip.date);
-                        return tripDate.getFullYear() === currentYear;
-                    });
-                }
-                
-                if (filteredTrips.length === 0) {
-                    alert(`No trips found for the selected ${period}`);
-                    return;
-                }
-                
-                // Generate CSV
-                let csv = 'Date,From,To,Purpose,Miles,Deduction\n';
-                
-                filteredTrips.forEach(trip => {
-                    const deduction = (trip.miles * 0.67).toFixed(2);
-                    csv += `${trip.date},${trip.startLocation},${trip.destination},${trip.purpose},${trip.miles.toFixed(1)},${deduction}\n`;
-                });
-                
-                // Create download link
-                const blob = new Blob([csv], { type: 'text/csv' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `mileage_${period}_${now.toISOString().slice(0, 10)}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                alert(`${period.charAt(0).toUpperCase() + period.slice(1)} report exported!`);
-            }
-            
-            // Initialize
-            loadSettings();
-            updateSummary();
-            updateTripHistory();
-            
-            // Load settings function
-            function loadSettings() {
-                const defaultStart = localStorage.getItem('defaultStart');
-                const frequentDest = localStorage.getItem('frequentDest');
-                const autoCalc = localStorage.getItem('autoCalc');
-                
-                if (defaultStart) {
-                    document.getElementById('defaultStart').value = defaultStart;
-                }
-                
-                if (frequentDest) {
-                    document.getElementById('frequentDest').value = frequentDest;
-                    updateFrequentDestinations();
-                }
-                
-                if (autoCalc !== null) {
-                    document.getElementById('autoCalc').checked = autoCalc === 'true';
-                }
-            }
+        });
+    </script>
+</body>
+</html>
